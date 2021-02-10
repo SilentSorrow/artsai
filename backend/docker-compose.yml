@@ -1,0 +1,46 @@
+version: '3.5'
+
+networks:
+  default-network:
+    external: false
+
+volumes:
+  psql-volume:
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - '3000:3000'
+    volumes:
+      - '.:/app'
+    links:
+      - psql
+      - redis
+    networks:
+      - default-network
+
+  psql:
+    env_file:
+      - '.env'
+    image: postgres:12.5
+    container_name: psql
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - psql-volume:/var/lib/db/data
+    ports:
+      - 5432:5432
+    networks:
+      - default-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    networks:
+      - default-network

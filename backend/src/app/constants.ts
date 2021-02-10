@@ -1,0 +1,10 @@
+export const API_ROOT = '/api';
+export const API_PORT = 3000;
+export const DB_TYPE = 'postgres';
+export const PG_HOST = 'psql';
+export const PG_PORT = 5432;
+export const PG_NAME = 'postgres';
+export const REDIS_HOST = 'redis';
+export const REDIS_PORT = 6379;
+export const DEFAULT_PG_CONN_NAME = 'default_pg_conn_name';
+export const DEFAULT_REDIS_CONN_NAME = 'default_redis_conn_name';
