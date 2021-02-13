@@ -1,14 +1,16 @@
-import * as multer from 'multer';
+import multer from 'multer';
 import mime from 'mime';
 import { PROFILE_IMG_DIRECTORY, ART_IMG_DIRECTORY } from '../../app/constants';
 import { Crypto } from '../../utils';
+import { AppRequest } from '../../types';
+import { Request } from 'express';
 
 export enum FileUploadOptionType {
   Profile = 'profile',
   Art = 'art',
 }
 
-export const getFileUploadOptions = (type: FileUploadOptionType) => {
+export const getFileUploadOptions = (type: FileUploadOptionType): multer.Options => {
   let path = '';
   let fileLimit = 0;
 
@@ -23,16 +25,16 @@ export const getFileUploadOptions = (type: FileUploadOptionType) => {
 
   return {
     storage: multer.diskStorage({
-      destination: (req: any, file: Express.Multer.File, cb: Function) => {
+      destination: (req: AppRequest | Request, file: Express.Multer.File, cb: Function): void => {
         cb(null, path);
       },
-      filename: (req: any, file: Express.Multer.File, cb: Function) => {
+      filename: (req: AppRequest | Request, file: Express.Multer.File, cb: Function): void => {
         const ext = mime.extension(file.mimetype);
         const filename = Crypto.createRandomString(27) + '.' + ext;
         cb(null, filename);
       },
     }),
-    fileFilter: (req: any, file: Express.Multer.File, cb: Function) => {
+    fileFilter: (req: AppRequest | Request, file: Express.Multer.File, cb: Function): void => {
       const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff'];
       cb(null, allowedMimeTypes.includes(file.mimetype));
     },

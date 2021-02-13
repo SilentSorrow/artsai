@@ -3,6 +3,7 @@ import { UnauthorizedError } from 'routing-controllers';
 import { Crypto, Validator } from '../utils';
 import { AsyncRedis } from '../db';
 import { User } from '../db/entities';
+import { LoginData } from '../types';
 
 export default class AuthService {
   private userRepo: typeorm.Repository<User>;
@@ -11,7 +12,7 @@ export default class AuthService {
     this.userRepo = this.pgConn.getRepository(User);
   }
 
-  async login(username: string, password: string) {
+  async login(username: string, password: string): Promise<LoginData> {
     username = Validator.validateUsername(username);
     password = Validator.validatePassword(password);
 
@@ -29,20 +30,22 @@ export default class AuthService {
     return { user, token };
   }
 
-  async sendCode() {}
+  async sendCode(): Promise<boolean> {
+    return false;
+  }
 
-  async verifyCode(code: string, user: User) {
+  async verifyCode(code: string, user: User): Promise<boolean> {
     const userId = this.redisConn.getAsync(code);
     if (user !== userId) {
       throw new UnauthorizedError('Code is not recognized');
     }
 
-    const updateData = await this.userRepo.update(user, { isVerified: true });
+    await this.userRepo.update(user, { isVerified: true });
 
-    return updateData;
+    return true;
   }
 
-  generateRandomCode() {
+  generateRandomCode(): number {
     return Math.floor(100000 + Math.random() * 900000);
   }
 }

@@ -2,6 +2,7 @@ import * as typeorm from 'typeorm';
 import { ValidationError } from '../errors';
 import { CatalogService } from '../services';
 import { Art, Tag, Type, User } from '../db/entities';
+import { ArtData } from '../types';
 
 export default class ArtService {
   private artRepo: typeorm.Repository<Art>;
@@ -16,7 +17,7 @@ export default class ArtService {
     this.userRepo = this.pgConn.getRepository(User);
   }
 
-  async save(artData: any) {
+  async save(artData: ArtData, user: User): Promise<Art> {
     //
     if (artData.tags.length > 5) {
       throw new ValidationError(''); //
@@ -32,7 +33,7 @@ export default class ArtService {
         title: artData.title,
         description: artData.description,
         mainImage: artData.mainImage,
-        user: artData.user,
+        user,
         type,
       } as Art;
 
@@ -51,9 +52,7 @@ export default class ArtService {
         }
       }
 
-      saved.user = undefined;
-
-      return saved;
+      return saved as Art;
     } catch (err) {
       throw new ValidationError('Invalid art data', err.message);
     }

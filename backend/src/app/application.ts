@@ -24,7 +24,7 @@ import { ErrorHandlerMiddleware } from '../middlewares';
 
 export default class Application {
   application: express.Express;
-  options: any;
+  options: AppOptions;
 
   constructor() {
     this.application = express();
@@ -55,23 +55,23 @@ export default class Application {
     };
   }
 
-  init() {
+  init(): void {
     this.application.use(bodyParser.json());
     this.application.use(express.urlencoded({ extended: false }));
     this.application.use(cors()); //{origin: "http://localhost:4000",credentials: true,})
   }
 
-  listen(port: number = API_PORT) {
+  listen(port: number = API_PORT): void {
     this.application.listen(port, () => {
       console.log(`app started listening on :${port}`);
     });
   }
 
-  async setup() {
+  async setup(): Promise<void> {
     useContainer(Container);
 
-    const pgConn = await createPgConnection(this.options.pgConnOpts as typeorm.ConnectionOptions);
-    const redisConn = createRedisConnection(this.options.redisConnOpts as redis.ClientOpts);
+    const pgConn = await createPgConnection(this.options.pgConnOpts);
+    const redisConn = createRedisConnection(this.options.redisConnOpts);
     Container.set(DEFAULT_PG_CONN_NAME, pgConn);
     Container.set(DEFAULT_REDIS_CONN_NAME, redisConn);
 
@@ -97,13 +97,16 @@ export default class Application {
     this.options.routingControllersOptions.middlewares = [ErrorHandlerMiddleware];
   }
 
-  async start() {
+  async start(): Promise<void> {
     this.init();
     await this.setup();
 
-    this.application = useExpressServer(
-      this.application,
-      this.options.routingControllersOptions as RoutingControllersOptions
-    );
+    this.application = useExpressServer(this.application, this.options.routingControllersOptions);
   }
 }
+
+type AppOptions = {
+  pgConnOpts: typeorm.ConnectionOptions;
+  redisConnOpts: redis.ClientOpts;
+  routingControllersOptions: RoutingControllersOptions;
+};

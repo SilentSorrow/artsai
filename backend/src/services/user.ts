@@ -1,7 +1,9 @@
 import * as typeorm from 'typeorm';
+import * as fs from 'fs';
 import { Crypto, Validator } from '../utils';
 import { ValidationError } from '../errors';
 import { User } from '../db/entities';
+import { OmmitedUser } from '../types';
 
 export default class UserService {
   private userRepo: typeorm.Repository<User>;
@@ -10,7 +12,7 @@ export default class UserService {
     this.userRepo = this.pgConn.getRepository(User);
   }
 
-  async save(user: User) {
+  async save(user: User): Promise<OmmitedUser> {
     user.username = Validator.validateUsername(user.username);
     user.password = Validator.validatePassword(user.password);
     if (!Validator.isEmailValid(user.email)) {
@@ -28,15 +30,25 @@ export default class UserService {
       throw new ValidationError('Invalid user data', err.message);
     }
 
-    return saved;
+    return saved as OmmitedUser;
   }
 
-  async getByUsername(username: string) {
+  async changeProfileImage(profileImage: string, user: User): Promise<OmmitedUser> {
+    await this.userRepo.update(user, { profileImage });
+
+    const prevImg = (await this.userRepo.findOne(user)).profileImage;
+    if (prevImg) {
+      fs.unlinkSync(`${process.cwd()}'../img/profile/'${prevImg}`);
+    }
+
+    user.profileImage = profileImage;
+
+    return user as OmmitedUser;
+  }
+
+  async getByUsername(username: string): Promise<OmmitedUser> {
     const user = await this.userRepo.findOne(username);
 
-    user.password = undefined;
-    user.salt = undefined;
-
-    return user;
+    return user as OmmitedUser;
   }
 }

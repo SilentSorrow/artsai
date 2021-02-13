@@ -10,7 +10,7 @@ export default class CatalogService {
     this.typeRepo = this.pgConn.getRepository(Type);
   }
 
-  async getSubjects(filterIds: string[] = []) {
+  async getSubjects(filterIds: string[] = []): Promise<Subject[]> {
     return await this.subjectRepo.find(
       filterIds.length && {
         where: { id: typeorm.In(filterIds) },
@@ -18,7 +18,7 @@ export default class CatalogService {
     );
   }
 
-  async getTypes() {
+  async getTypes(): Promise<Type[]> {
     return await this.typeRepo.find();
   }
 }

@@ -1,9 +1,9 @@
 import { BodyParam, Post, Req, JsonController, UseBefore } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
-import { UserService } from '../services';
-import { Art, User, Type } from '../db/entities';
 import { ArtService } from '../services';
+import { User } from '../db/entities';
+import { ArtData, AppRequest } from '../types';
 
 @Service()
 @JsonController('/arts')
@@ -15,22 +15,20 @@ export default class ArtController {
   async create(
     @BodyParam('title', { required: true }) title: string,
     @BodyParam('description', { required: true }) description: string,
-    @BodyParam('mainImagePath', { required: true }) mainImagePath: string,
     @BodyParam('typeId', { required: true }) typeId: string,
     @BodyParam('subjectIds', { required: true }) subjectIds: string[],
     @BodyParam('tags', { required: true }) tags: string[],
-    @Req() req: any
+    @Req() req: AppRequest
   ) {
     const art = {
       title,
       description,
-      mainImagePath,
+      mainImage,
       typeId,
       subjectIds,
       tags,
-      user: req.user,
-    }; //
+    } as ArtData;
 
-    return await this.artService.save(art);
+    return await this.artService.save(art, req.user as User);
   }
 }

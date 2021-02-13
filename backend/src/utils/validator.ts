@@ -10,7 +10,7 @@ export default class Validator {
     digitsPattern: /[0-9]+/g,
   };
 
-  static validateUsername(username: string) {
+  static validateUsername(username: string): string {
     const errors = [];
     const usernameChars = username.split('');
 
@@ -34,7 +34,7 @@ export default class Validator {
     return username;
   }
 
-  static validatePassword(password: string) {
+  static validatePassword(password: string): string {
     const errors = [];
     const passwordChars = password.split('');
 
@@ -66,7 +66,7 @@ export default class Validator {
     return password;
   }
 
-  static isEmailValid(email: string) {
+  static isEmailValid(email: string): boolean {
     // eslint-disable-next-line max-len
     const regexp: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

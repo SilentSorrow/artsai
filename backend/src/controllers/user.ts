@@ -1,8 +1,10 @@
-import { BodyParam, Post, JsonController, UploadedFile } from 'routing-controllers';
+import { BodyParam, Post, JsonController, UploadedFile, Put, UseBefore, Req } from 'routing-controllers';
 import { Service } from 'typedi';
+import { userAuth } from '../middlewares';
 import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
 import { User } from '../db/entities';
 import { UserService } from '../services';
+import { AppRequest } from '../types';
 
 @Service()
 @JsonController('/users')
@@ -11,15 +13,12 @@ export default class UserController {
 
   @Post('/')
   async create(
-    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Profile), required: true })
-    file: Express.Multer.File,
     @BodyParam('username', { required: true }) username: string,
     @BodyParam('email', { required: true }) email: string,
     @BodyParam('about', { required: true }) about: string,
     @BodyParam('password', { required: true }) password: string
   ) {
     const user = {
-      profileImage: file.filename,
       username,
       email,
       about,
@@ -27,9 +26,16 @@ export default class UserController {
     } as User;
     const created = await this.userService.save(user);
 
-    created.password = undefined;
-    created.salt = undefined;
-
     return created;
+  }
+
+  @UseBefore(userAuth())
+  @Put('/change-profile-image')
+  async changeProfileImage(
+    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Profile), required: true })
+    file: Express.Multer.File,
+    @Req() req: AppRequest
+  ) {
+    return await this.userService.changeProfileImage(file.filename, req.user as User);
   }
 }

@@ -3,6 +3,7 @@ import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { AuthService } from '../services';
 import { User } from '../db/entities';
+import { AppRequest } from '../types';
 
 @Service()
 @JsonController('/auth')
@@ -19,9 +20,7 @@ export default class AuthController {
 
   @UseBefore(userAuth())
   @Put('/verify-code')
-  async verifyCode(@BodyParam('code', { required: true }) code: string, @Req() req: any) {
-    const user = req.user as User;
-
-    return await this.authService.verifyCode(code, user);
+  async verifyCode(@BodyParam('code', { required: true }) code: string, @Req() req: AppRequest) {
+    return await this.authService.verifyCode(code, req.user as User);
   }
 }

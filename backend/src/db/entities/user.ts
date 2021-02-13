@@ -15,8 +15,8 @@ export class User {
   @Column({ name: 'about', type: 'varchar', length: 255 })
   about: string;
 
-  @Column({ name: 'profile_image_path', type: 'varchar', length: 255 })
-  profileImage: string;
+  @Column({ name: 'profile_image_path', type: 'varchar', length: 255, nullable: true })
+  profileImage?: string;
 
   @Column({ name: 'is_verified', type: 'boolean', default: false })
   isVerified: boolean;
