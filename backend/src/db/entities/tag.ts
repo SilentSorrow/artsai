@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Art } from '.';
 
 @Entity('tag')
 export class Tag {
@@ -10,4 +11,8 @@ export class Tag {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
+
+  @ManyToOne(() => Art, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'art_id' })
+  art: Art;
 }

@@ -1,4 +1,6 @@
+import ArtController from './art';
 import AuthController from './auth';
+import CatalogController from './catalog';
 import UserController from './user';
 
-export { AuthController, UserController };
+export { ArtController, AuthController, CatalogController, UserController };

@@ -18,8 +18,8 @@ import {
   DEFAULT_REDIS_CONN_NAME,
 } from './constants';
 import { createPgConnection, createRedisConnection } from '../db';
-import { AuthService, UserService } from '../services';
-import { AuthController, UserController } from '../controllers';
+import { ArtService, AuthService, CatalogService, UserService } from '../services';
+import { ArtController, AuthController, CatalogController, UserController } from '../controllers';
 import { ErrorHandlerMiddleware } from '../middlewares';
 
 export default class Application {
@@ -58,7 +58,7 @@ export default class Application {
   init() {
     this.application.use(bodyParser.json());
     this.application.use(express.urlencoded({ extended: false }));
-    this.application.use(cors()); //{origin: "http://localhost:3000",credentials: true,})
+    this.application.use(cors()); //{origin: "http://localhost:4000",credentials: true,})
   }
 
   listen(port: number = API_PORT) {
@@ -76,13 +76,22 @@ export default class Application {
     Container.set(DEFAULT_REDIS_CONN_NAME, redisConn);
 
     //Services
+    const catalogService = new CatalogService(pgConn);
+    const artService = new ArtService(pgConn, catalogService);
     const authService = new AuthService(pgConn, redisConn);
     const userService = new UserService(pgConn);
+    Container.set(ArtService, artService);
     Container.set(AuthService, authService);
+    Container.set(CatalogService, catalogService);
     Container.set(UserService, userService);
 
     //Controllers
-    this.options.routingControllersOptions.controllers = [AuthController, UserController];
+    this.options.routingControllersOptions.controllers = [
+      ArtController,
+      AuthController,
+      CatalogController,
+      UserController,
+    ];
 
     //Middlewares
     this.options.routingControllersOptions.middlewares = [ErrorHandlerMiddleware];

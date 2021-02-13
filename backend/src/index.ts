@@ -7,7 +7,7 @@ import { Application } from './app';
   try {
     await app.start();
     app.listen();
-  } catch (e) {
-    console.log('crashed', e);
+  } catch (err) {
+    console.log('crashed', err);
   }
 })();

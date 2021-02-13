@@ -10,7 +10,7 @@ export default class Validator {
     digitsPattern: /[0-9]+/g,
   };
 
-  static isUsernameValid(username: string) {
+  static validateUsername(username: string) {
     const errors = [];
     const usernameChars = username.split('');
 
@@ -31,10 +31,10 @@ export default class Validator {
       throw new ValidationError('Username validation error', errors);
     }
 
-    return true;
+    return username;
   }
 
-  static isPasswordValid(password: string) {
+  static validatePassword(password: string) {
     const errors = [];
     const passwordChars = password.split('');
 
@@ -59,11 +59,11 @@ export default class Validator {
       });
     }
 
-    if (errors.length > 0) {
+    if (errors.length) {
       throw new ValidationError('Password validation error', errors);
     }
 
-    return true;
+    return password;
   }
 
   static isEmailValid(email: string) {

@@ -1,5 +1,4 @@
 import * as typeorm from 'typeorm';
-import { Request, Response } from 'express';
 import Container from 'typedi';
 import { UnauthorizedError } from 'routing-controllers';
 import { DEFAULT_PG_CONN_NAME, DEFAULT_REDIS_CONN_NAME } from '../app/constants';
@@ -15,9 +14,12 @@ const getRedisConnection = () => {
 };
 
 const authMiddleware = (relations: string[]) => {
-  async (req: Request, res: Response, next?: (err?: any) => any) => {
+  return async (req: any, res: any, next: any) => {
     try {
       const token = req.headers['app-auth'];
+      if (!token) {
+        throw new UnauthorizedError('Token is not recognized');
+      }
 
       const redisConn = getRedisConnection();
       const userId = redisConn.getAsync(token);

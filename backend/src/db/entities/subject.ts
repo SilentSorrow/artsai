@@ -1,8 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Art } from '.';
 
-@Entity('type')
-export class Type {
+@Entity('subject')
+export class Subject {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
@@ -12,6 +12,7 @@ export class Type {
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
-  @OneToMany(() => Type, (type) => type.art)
-  art: Art;
+  @ManyToMany(() => Art, (art) => art.subjects)
+  @JoinTable()
+  arts: Art[];
 }
