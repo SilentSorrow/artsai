@@ -36,6 +36,6 @@ export default class UserController {
     file: Express.Multer.File,
     @Req() req: AppRequest
   ) {
-    return await this.userService.changeProfileImage(file.filename, req.user as User);
+    return await this.userService.changeProfileImage(file.filename, req.user);
   }
 }

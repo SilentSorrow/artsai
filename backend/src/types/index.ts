@@ -2,19 +2,22 @@ import { Request } from 'express';
 import { User } from '../db/entities';
 
 type LoginData = {
-  user: User;
+  user: OmitedUser;
   token: string;
 };
 
-type OmmitedUser = {
+type OmitedUser = {
+  id: string;
   username: string;
   email: string;
   about: string;
-  profileImage: string;
+  profileImage?: string;
   isVerified: boolean;
+  createdAt: Date;
 };
 
 type ArtData = {
+  id: string;
   title: string;
   description: string;
   mainImage: string;
@@ -27,4 +30,4 @@ type AppRequest = Request & {
   user: User;
 };
 
-export { LoginData, OmmitedUser, ArtData, AppRequest };
+export { LoginData, OmitedUser, ArtData, AppRequest };

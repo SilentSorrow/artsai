@@ -1,8 +1,7 @@
-import { BodyParam, Post, Put, Req, JsonController, UseBefore } from 'routing-controllers';
+import { BodyParam, Post, Put, Req, JsonController, UseBefore, Get } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { AuthService } from '../services';
-import { User } from '../db/entities';
 import { AppRequest } from '../types';
 
 @Service()
@@ -19,8 +18,14 @@ export default class AuthController {
   }
 
   @UseBefore(userAuth())
+  @Get('/send-code')
+  async sendCode(@Req() req: AppRequest) {
+    return await this.authService.sendCode(req.user);
+  }
+
+  @UseBefore(userAuth())
   @Put('/verify-code')
   async verifyCode(@BodyParam('code', { required: true }) code: string, @Req() req: AppRequest) {
-    return await this.authService.verifyCode(code, req.user as User);
+    return await this.authService.verifyCode(code, req.user);
   }
 }

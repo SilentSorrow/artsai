@@ -18,12 +18,11 @@ export default class ArtService {
   }
 
   async save(artData: ArtData, user: User): Promise<Art> {
-    //
     if (artData.tags.length > 5) {
-      throw new ValidationError(''); //
+      throw new ValidationError('Maximum tags - 5');
     }
     if (!artData.subjectIds.length || artData.subjectIds.length > 3) {
-      throw new ValidationError(''); //
+      throw new ValidationError('You have to choose between 1 and 3 subjects');
     }
 
     let saved = undefined;
@@ -52,7 +51,7 @@ export default class ArtService {
         }
       }
 
-      return saved as Art;
+      return saved;
     } catch (err) {
       throw new ValidationError('Invalid art data', err.message);
     }

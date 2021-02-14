@@ -12,14 +12,14 @@ export enum FileUploadOptionType {
 
 export const getFileUploadOptions = (type: FileUploadOptionType): multer.Options => {
   let path = '';
-  let fileLimit = 0;
+  const fileLimit = 1; //
 
   switch (type) {
     case FileUploadOptionType.Profile:
-      (path = PROFILE_IMG_DIRECTORY), (fileLimit = 1);
+      path = PROFILE_IMG_DIRECTORY;
       break;
     case FileUploadOptionType.Art:
-      (path = ART_IMG_DIRECTORY), (fileLimit = 5);
+      path = ART_IMG_DIRECTORY;
       break;
   }
 

@@ -1,8 +1,8 @@
-import { BodyParam, Post, Req, JsonController, UseBefore } from 'routing-controllers';
+import { BodyParam, Post, Req, JsonController, UseBefore, UploadedFile } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
+import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
 import { ArtService } from '../services';
-import { User } from '../db/entities';
 import { ArtData, AppRequest } from '../types';
 
 @Service()
@@ -13,6 +13,8 @@ export default class ArtController {
   @UseBefore(userAuth())
   @Post('/')
   async create(
+    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Art), required: true })
+    file: Express.Multer.File,
     @BodyParam('title', { required: true }) title: string,
     @BodyParam('description', { required: true }) description: string,
     @BodyParam('typeId', { required: true }) typeId: string,
@@ -23,12 +25,12 @@ export default class ArtController {
     const art = {
       title,
       description,
-      mainImage,
       typeId,
       subjectIds,
       tags,
+      mainImage: file.filename,
     } as ArtData;
 
-    return await this.artService.save(art, req.user as User);
+    return await this.artService.save(art, req.user);
   }
 }

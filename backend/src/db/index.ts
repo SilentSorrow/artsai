@@ -22,8 +22,13 @@ const createRedisConnection = (connOptions: redis.ClientOpts): AsyncRedis => {
 };
 
 class AsyncRedis extends redis.RedisClient {
-  public readonly getAsync: (arg1: string) => Promise<string | null> = promisify(this.get).bind(this);
-  public readonly setAsync: (arg1: string, arg2: string) => Promise<unknown> = promisify(this.set).bind(this);
+  public readonly getAsync: (key: string) => Promise<string | null> = promisify(this.get).bind(this);
+  public readonly setAsync: (
+    key: string,
+    value: string,
+    mode?: string,
+    duration?: number
+  ) => Promise<unknown> = promisify(this.set).bind(this);
   public readonly delAsync: () => Promise<number> = promisify(this.del).bind(this);
 }
 

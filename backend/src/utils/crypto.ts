@@ -11,13 +11,17 @@ export default class Crypro {
 
   static hashPassword(password: string): CryptoData {
     const salt = this.createRandomString();
-    const hash = crypto.pbkdf2Sync(password, salt, this.iterations, this.keylen, this.hashAlgoritm).toString('hex');
+    const hash = crypto
+      .pbkdf2Sync(password, salt, this.iterations, this.keylen, this.hashAlgoritm as string)
+      .toString('hex');
 
     return { salt, hash };
   }
 
   static checkPassword(input: string, hashedPassword: string, salt: string): boolean {
-    const hash = crypto.pbkdf2Sync(input, salt, this.iterations, this.keylen, this.hashAlgoritm).toString('hex');
+    const hash = crypto
+      .pbkdf2Sync(input, salt, this.iterations, this.keylen, this.hashAlgoritm as string)
+      .toString('hex');
 
     return hash === hashedPassword;
   }

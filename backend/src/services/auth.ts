@@ -1,6 +1,6 @@
 import * as typeorm from 'typeorm';
 import { UnauthorizedError } from 'routing-controllers';
-import { Crypto, Validator } from '../utils';
+import { Crypto, Validator, omitUser } from '../utils';
 import { AsyncRedis } from '../db';
 import { User } from '../db/entities';
 import { LoginData } from '../types';
@@ -22,21 +22,23 @@ export default class AuthService {
     }
 
     const token = Crypto.createRandomString();
-    this.redisConn.setAsync(token, user.id);
+    this.redisConn.setAsync(token, user.id, 'EX', Number(process.env.TOKEN_EXP_TIME));
 
-    user.password = undefined;
-    user.salt = undefined;
-
-    return { user, token };
+    return { user: omitUser(user), token } as LoginData;
   }
 
-  async sendCode(): Promise<boolean> {
-    return false;
+  async sendCode(user: User): Promise<boolean> {
+    const code = this.generateRandomCode();
+    this.redisConn.setAsync(String(code), user.id, 'EX', Number(process.env.CODE_EXP_TIME));
+
+    //send code(later...)
+
+    return true;
   }
 
   async verifyCode(code: string, user: User): Promise<boolean> {
-    const userId = this.redisConn.getAsync(code);
-    if (user !== userId) {
+    const userId = await this.redisConn.getAsync(code);
+    if (user.id !== userId) {
       throw new UnauthorizedError('Code is not recognized');
     }
 

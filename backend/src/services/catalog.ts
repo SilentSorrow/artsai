@@ -11,11 +11,13 @@ export default class CatalogService {
   }
 
   async getSubjects(filterIds: string[] = []): Promise<Subject[]> {
-    return await this.subjectRepo.find(
-      filterIds.length && {
+    if (filterIds) {
+      return await this.subjectRepo.find({
         where: { id: typeorm.In(filterIds) },
-      }
-    );
+      });
+    }
+
+    return await this.subjectRepo.find();
   }
 
   async getTypes(): Promise<Type[]> {

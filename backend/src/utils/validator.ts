@@ -3,7 +3,8 @@ import { ValidationError } from '../errors';
 export default class Validator {
   private static options = {
     passMinLength: 8,
-    usernameMinLength: 5,
+    usernameMinLength: 3,
+    usernameMaxLength: 10,
     digitsCount: 1,
     specialCharactersMinCount: 1,
     specialCharactersPattern: /[^A-Za-z0-9]+/g,
@@ -14,9 +15,9 @@ export default class Validator {
     const errors = [];
     const usernameChars = username.split('');
 
-    if (username.length < this.options.usernameMinLength) {
+    if (username.length < this.options.usernameMinLength || username.length > this.options.usernameMaxLength) {
       errors.push({
-        message: `Username should be at least ${this.options.usernameMinLength} characters long`,
+        message: `Username should be between ${this.options.usernameMinLength} and ${this.options.usernameMaxLength} characters`,
       });
     }
 
