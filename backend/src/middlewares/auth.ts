@@ -32,7 +32,7 @@ const authMiddleware = (relations: string[]): Function => {
         throw new UnauthorizedError('User not found');
       }
 
-      req['user'] = user;
+      req.user = user;
       next();
     } catch (err) {
       next(err);

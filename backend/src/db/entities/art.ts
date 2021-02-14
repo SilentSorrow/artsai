@@ -9,6 +9,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { Subject, Tag, Type, User } from '.';
+import { OmitedUser } from '../../types';
 
 @Entity('art')
 export class Art {
@@ -33,7 +34,7 @@ export class Art {
 
   @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: User | OmitedUser;
 
   @OneToMany(() => Tag, (tag) => tag.art)
   tags: Tag[];

@@ -46,9 +46,13 @@ export default class UserService {
     return omitUser(user);
   }
 
-  async getByUsername(username: string): Promise<OmitedUser> {
+  async getByUsername(username: string): Promise<OmitedUser | undefined> {
     const user = await this.userRepo.findOne({ username });
 
-    return omitUser(user as User);
+    if (user) {
+      return omitUser(user as User);
+    }
+
+    return user;
   }
 }

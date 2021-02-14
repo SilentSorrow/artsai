@@ -11,7 +11,7 @@ export default class CatalogService {
   }
 
   async getSubjects(filterIds: string[] = []): Promise<Subject[]> {
-    if (filterIds) {
+    if (filterIds.length) {
       return await this.subjectRepo.find({
         where: { id: typeorm.In(filterIds) },
       });

@@ -1,4 +1,4 @@
-import { BodyParam, Post, JsonController, UploadedFile, Put, UseBefore, Req } from 'routing-controllers';
+import { BodyParam, Post, JsonController, UploadedFile, Put, UseBefore, Req, Get, Param } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
@@ -27,6 +27,11 @@ export default class UserController {
     const created = await this.userService.save(user);
 
     return created;
+  }
+
+  @Get('/:username')
+  async getByUsername(@Param('username') username: string) {
+    return await this.userService.getByUsername(username);
   }
 
   @UseBefore(userAuth())

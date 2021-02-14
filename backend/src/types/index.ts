@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Art, User } from '../db/entities';
+import { User } from '../db/entities';
 
 type LoginData = {
   user: OmitedUser;
@@ -14,7 +14,6 @@ type OmitedUser = {
   profileImage?: string;
   isVerified: boolean;
   createdAt: Date;
-  arts: Art[];
 };
 
 type ArtData = {

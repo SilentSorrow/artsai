@@ -1,4 +1,4 @@
-import { BodyParam, Post, Req, JsonController, UseBefore, UploadedFile } from 'routing-controllers';
+import { BodyParam, Post, Req, JsonController, UseBefore, UploadedFile, Get, Param, Put } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
@@ -32,5 +32,21 @@ export default class ArtController {
     } as ArtData;
 
     return await this.artService.save(art, req.user);
+  }
+
+  @UseBefore(userAuth())
+  @Put('/change-main-image/:id')
+  async changeProfileImage(
+    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Art), required: true })
+    file: Express.Multer.File,
+    @Param('id') id: string,
+    @Req() req: AppRequest
+  ) {
+    return await this.artService.changeMainImage(file.filename, req.user, id);
+  }
+
+  @Get('/:id')
+  async getById(@Param('id') id: string) {
+    return await this.artService.getById(id);
   }
 }
