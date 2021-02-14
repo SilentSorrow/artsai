@@ -1,5 +1,6 @@
 import multer from 'multer';
 import mime from 'mime';
+import fs from 'fs';
 import { PROFILE_IMG_DIRECTORY, ART_IMG_DIRECTORY } from '../../app/constants';
 import { Crypto } from '../../utils';
 import { AppRequest } from '../../types';
@@ -22,6 +23,8 @@ export const getFileUploadOptions = (type: FileUploadOptionType): multer.Options
       path = ART_IMG_DIRECTORY;
       break;
   }
+
+  fs.mkdirSync(path, { recursive: true });
 
   return {
     storage: multer.diskStorage({
