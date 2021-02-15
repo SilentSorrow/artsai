@@ -39,6 +39,6 @@ export class Art {
   @OneToMany(() => Tag, (tag) => tag.art)
   tags: Tag[];
 
-  @ManyToMany(() => Subject, (subject) => subject.arts)
+  @ManyToMany(() => Subject, (subject) => subject.art)
   subjects: Subject[];
 }

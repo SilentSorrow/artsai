@@ -14,5 +14,5 @@ export class Subject {
 
   @ManyToMany(() => Art, (art) => art.subjects)
   @JoinTable()
-  arts: Art[];
+  art: Art[];
 }

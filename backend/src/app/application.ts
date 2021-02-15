@@ -18,7 +18,7 @@ import {
   DEFAULT_REDIS_CONN_NAME,
 } from './constants';
 import { createPgConnection, createRedisConnection } from '../db';
-import { ArtService, AuthService, CatalogService, UserService } from '../services';
+import { ArtService, AuthService, CatalogService, UserService, MediaService } from '../services';
 import { ArtController, AuthController, CatalogController, UserController } from '../controllers';
 import { ErrorHandlerMiddleware } from '../middlewares';
 
@@ -77,13 +77,15 @@ export default class Application {
 
     //Services
     const catalogService = new CatalogService(pgConn);
+    const mediaService = new MediaService(pgConn);
     const artService = new ArtService(pgConn, catalogService);
-    const authService = new AuthService(pgConn, redisConn);
     const userService = new UserService(pgConn);
+    const authService = new AuthService(pgConn, redisConn);
     Container.set(ArtService, artService);
     Container.set(AuthService, authService);
     Container.set(CatalogService, catalogService);
     Container.set(UserService, userService);
+    Container.set(MediaService, mediaService);
 
     //Controllers
     this.options.routingControllersOptions.controllers = [

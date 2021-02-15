@@ -2,13 +2,13 @@ import { BodyParam, Post, Req, JsonController, UseBefore, UploadedFile, Get, Par
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
-import { ArtService } from '../services';
+import { ArtService, MediaService } from '../services';
 import { ArtData, AppRequest } from '../types';
 
 @Service()
-@JsonController('/arts')
+@JsonController('/art')
 export default class ArtController {
-  constructor(private artService: ArtService) {}
+  constructor(private artService: ArtService, private mediaService: MediaService) {}
 
   @UseBefore(userAuth())
   @Post('/')
@@ -48,5 +48,18 @@ export default class ArtController {
   @Get('/:id')
   async getById(@Param('id') id: string) {
     return await this.artService.getById(id);
+  }
+
+  @Get('/:id/likes')
+  async getLikesByArtId(@Param('id') id: string) {
+    return await this.mediaService.getLikesByArtId(id);
+  }
+
+  @UseBefore(userAuth())
+  @Put('/like/:id')
+  async toggleLike(@Param('id') id: string, @Req() req: AppRequest) {
+    await this.mediaService.toggleLike(id, req.user);
+
+    return [];
   }
 }

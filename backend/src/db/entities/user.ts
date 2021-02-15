@@ -31,5 +31,5 @@ export class User {
   createdAt: Date;
 
   @OneToMany(() => Art, (art) => art.user)
-  arts: Art[];
+  art: Art[];
 }

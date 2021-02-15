@@ -2,7 +2,7 @@ import * as typeorm from 'typeorm';
 import fs from 'fs';
 import { ART_IMG_DIRECTORY } from '../app/constants';
 import { ValidationError } from '../errors';
-import { CatalogService } from '../services';
+import { CatalogService } from '.';
 import { Art, Tag, Type, User } from '../db/entities';
 import { ArtData } from '../types';
 import { omitUser, isAuthorized } from '../utils';
