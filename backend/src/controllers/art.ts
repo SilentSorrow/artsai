@@ -56,7 +56,7 @@ export default class ArtController {
   }
 
   @UseBefore(userAuth())
-  @Put('/like/:id')
+  @Put('/toggle-like/:id')
   async toggleLike(@Param('id') id: string, @Req() req: AppRequest) {
     await this.mediaService.toggleLike(id, req.user);
 
