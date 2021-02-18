@@ -1,6 +1,6 @@
 import * as typeorm from 'typeorm';
 import { UnauthorizedError } from 'routing-controllers';
-import { Crypto, Validator, omitUser } from '../utils';
+import { Crypto, Validator, omitUser, sendEmail } from '../utils';
 import { AsyncRedis } from '../db';
 import { User } from '../db/entities';
 import { LoginData } from '../types';
@@ -31,7 +31,7 @@ export default class AuthService {
     const code = this.generateRandomCode();
     this.redisConn.setAsync(String(code), user.id, 'EX', Number(process.env.CODE_EXP_TIME));
 
-    //send code(later...)
+    sendEmail(user.email, code);
 
     return true;
   }
@@ -42,7 +42,8 @@ export default class AuthService {
       throw new UnauthorizedError('Code is not recognized');
     }
 
-    await this.userRepo.update(user, { isVerified: true });
+    await this.userRepo.update({ id: user.id }, { isVerified: true });
+
     this.redisConn.delAsync(code);
 
     return true;
