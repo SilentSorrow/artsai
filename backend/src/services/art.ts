@@ -1,11 +1,11 @@
 import * as typeorm from 'typeorm';
-import fs from 'fs';
-import { ART_IMG_DIRECTORY } from '../app/constants';
 import { ValidationError } from '../errors';
 import { CatalogService } from '.';
+import { TOP_ART_COUNT } from '../app/constants';
 import { Art, Tag, Type, User } from '../db/entities';
-import { ArtData } from '../types';
-import { omitUser, isAuthorized } from '../utils';
+import { ArtData, OmitedArt } from '../types';
+import { omitUser } from '../utils';
+import { UnauthorizedError } from 'routing-controllers';
 
 export default class ArtService {
   private artRepo: typeorm.Repository<Art>;
@@ -62,25 +62,32 @@ export default class ArtService {
     }
   }
 
-  async changeMainImage(mainImage: string, user: User, id: string): Promise<any> {
-    await isAuthorized<Art>(Art, id, user);
-
-    const oldArt = await this.artRepo.findOne({ id }, { relations: ['user'] });
-    if (!oldArt) {
-      return undefined;
+  async delete(id: string, user: User): Promise<Art | undefined> {
+    const art = await this.artRepo.findOne(id, { relations: ['user'] });
+    if (!art) {
+      return art;
     }
-    fs.unlinkSync(`${process.cwd()}/${ART_IMG_DIRECTORY}/${oldArt?.mainImage}`);
-    await this.artRepo.update({ id }, { mainImage });
+    if (art.user.id !== user.id) {
+      throw new UnauthorizedError('You are not authorized to make this action');
+    }
 
-    oldArt.mainImage = mainImage;
-    oldArt.user = omitUser(oldArt.user as User);
+    return this.artRepo.remove(art as Art);
+  }
 
-    return oldArt;
+  async getTop(): Promise<OmitedArt[]> {
+    const top = await this.pgConn.query(
+      `
+      SELECT id, main_image, created_At FROM art WHERE id
+      IN (SELECT art_id FROM "like" GROUP BY art_id ORDER BY count(*) DESC LIMIT $1)
+      `, // something with date, like created wihin last week
+      [TOP_ART_COUNT]
+    );
+
+    return top;
   }
 
   async getById(artId: string): Promise<Art> {
     const art = await this.artRepo.findOne({ id: artId }, { relations: ['type', 'subjects', 'tags', 'user'] });
-
     if (art?.user) {
       art.user = omitUser(art?.user as User);
     }

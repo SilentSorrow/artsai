@@ -10,3 +10,4 @@ export const DEFAULT_PG_CONN_NAME = 'default_pg_conn_name';
 export const DEFAULT_REDIS_CONN_NAME = 'default_redis_conn_name';
 export const PROFILE_IMG_DIRECTORY = './upload/profile';
 export const ART_IMG_DIRECTORY = './upload/art';
+export const TOP_ART_COUNT = 50;

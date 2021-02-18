@@ -29,7 +29,7 @@ class AsyncRedis extends redis.RedisClient {
     mode?: string,
     duration?: number
   ) => Promise<unknown> = promisify(this.set).bind(this);
-  public readonly delAsync: () => Promise<number> = promisify(this.del).bind(this);
+  public readonly delAsync: (key: string) => Promise<number> = promisify(this.del).bind(this);
 }
 
 export { createPgConnection, createRedisConnection, AsyncRedis };

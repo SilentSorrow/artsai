@@ -1,5 +1,5 @@
-import { BadRequestError } from 'routing-controllers';
 import * as typeorm from 'typeorm';
+import { BadRequestError } from 'routing-controllers';
 import { User, Like } from '../db/entities';
 
 export default class MediaService {

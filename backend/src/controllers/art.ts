@@ -1,4 +1,15 @@
-import { BodyParam, Post, Req, JsonController, UseBefore, UploadedFile, Get, Param, Put } from 'routing-controllers';
+import {
+  BodyParam,
+  Post,
+  Req,
+  JsonController,
+  UseBefore,
+  UploadedFile,
+  Get,
+  Param,
+  Put,
+  Delete,
+} from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
@@ -35,22 +46,22 @@ export default class ArtController {
   }
 
   @UseBefore(userAuth())
-  @Put('/change-main-image/:id')
-  async changeProfileImage(
-    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Art), required: true })
-    file: Express.Multer.File,
-    @Param('id') id: string,
-    @Req() req: AppRequest
-  ) {
-    return await this.artService.changeMainImage(file.filename, req.user, id);
+  @Delete('/:id')
+  async delete(@Param('id') id: string, @Req() req: AppRequest) {
+    return await this.artService.delete(id, req.user);
   }
 
-  @Get('/:id')
+  @Get('/top')
+  async getTop() {
+    return await this.artService.getTop();
+  }
+
+  @Get('/details/:id')
   async getById(@Param('id') id: string) {
     return await this.artService.getById(id);
   }
 
-  @Get('/:id/likes')
+  @Get('/details/:id/likes')
   async getLikesByArtId(@Param('id') id: string) {
     return await this.mediaService.getLikesByArtId(id);
   }

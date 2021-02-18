@@ -22,7 +22,7 @@ export class Art {
   @Column({ name: 'description', type: 'varchar', length: 255 })
   description: string;
 
-  @Column({ name: 'main_image_path', type: 'varchar', length: 255 })
+  @Column({ name: 'main_image', type: 'varchar', length: 255 })
   mainImage: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })

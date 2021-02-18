@@ -16,6 +16,12 @@ type OmitedUser = {
   createdAt: Date;
 };
 
+type OmitedArt = {
+  id: string;
+  mainImage: string;
+  createdAt: Date;
+};
+
 type ArtData = {
   id: string;
   title: string;
@@ -30,4 +36,4 @@ type AppRequest = Request & {
   user: User;
 };
 
-export { LoginData, OmitedUser, ArtData, AppRequest };
+export { LoginData, OmitedUser, OmitedArt, ArtData, AppRequest };

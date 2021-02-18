@@ -43,6 +43,7 @@ export default class AuthService {
     }
 
     await this.userRepo.update(user, { isVerified: true });
+    this.redisConn.delAsync(code);
 
     return true;
   }
