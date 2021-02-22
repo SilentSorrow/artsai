@@ -19,7 +19,7 @@ import {
 } from './constants';
 import { createPgConnection, createRedisConnection } from '../db';
 import { ArtService, AuthService, CatalogService, UserService, MediaService } from '../services';
-import { ArtController, AuthController, CatalogController, UserController } from '../controllers';
+import { ArtController, AuthController, CatalogController, ImageController, UserController } from '../controllers';
 import { ErrorHandlerMiddleware } from '../middlewares';
 
 export default class Application {
@@ -93,6 +93,7 @@ export default class Application {
       AuthController,
       CatalogController,
       UserController,
+      ImageController,
     ];
 
     //Middlewares

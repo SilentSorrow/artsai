@@ -12,7 +12,7 @@ import {
 } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
-import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
+import { getFileUploadOptions } from './options/fileUploadOptions';
 import { ArtService, MediaService } from '../services';
 import { ArtData, AppRequest } from '../types';
 
@@ -24,7 +24,7 @@ export default class ArtController {
   @UseBefore(userAuth())
   @Post('/')
   async create(
-    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Art), required: true })
+    @UploadedFile('file', { options: getFileUploadOptions(), required: true })
     file: Express.Multer.File,
     @BodyParam('title', { required: true }) title: string,
     @BodyParam('description', { required: true }) description: string,

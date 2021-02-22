@@ -1,7 +1,7 @@
 import { BodyParam, Post, JsonController, UploadedFile, Put, UseBefore, Req, Get, Param } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
-import { FileUploadOptionType, getFileUploadOptions } from './options/fileUploadOptions';
+import { getFileUploadOptions } from './options/fileUploadOptions';
 import { User } from '../db/entities';
 import { UserService } from '../services';
 import { AppRequest } from '../types';
@@ -37,7 +37,7 @@ export default class UserController {
   @UseBefore(userAuth())
   @Put('/change-profile-image')
   async changeProfileImage(
-    @UploadedFile('file', { options: getFileUploadOptions(FileUploadOptionType.Profile), required: true })
+    @UploadedFile('file', { options: getFileUploadOptions(), required: true })
     file: Express.Multer.File,
     @Req() req: AppRequest
   ) {

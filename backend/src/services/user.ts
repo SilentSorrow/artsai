@@ -1,6 +1,6 @@
 import * as typeorm from 'typeorm';
 import * as fs from 'fs';
-import { PROFILE_IMG_DIRECTORY } from '../app/constants';
+import { IMG_DIRECTORY_PATH } from '../app/constants';
 import { Crypto, Validator, omitUser } from '../utils';
 import { ValidationError } from '../errors';
 import { User } from '../db/entities';
@@ -37,7 +37,7 @@ export default class UserService {
   async changeProfileImage(profileImage: string, user: User): Promise<OmitedUser> {
     const oldUser = await this.userRepo.findOne({ id: user.id });
     if (oldUser?.profileImage) {
-      fs.unlinkSync(`${process.cwd()}/${PROFILE_IMG_DIRECTORY}/${oldUser?.profileImage}`);
+      fs.unlinkSync(`${process.cwd()}/${IMG_DIRECTORY_PATH}/${oldUser?.profileImage}`);
     }
     await this.userRepo.update({ id: user.id }, { profileImage });
 

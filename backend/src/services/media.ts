@@ -1,4 +1,6 @@
 import * as typeorm from 'typeorm';
+import fs from 'fs';
+import { IMG_DIRECTORY_PATH } from '../app/constants';
 import { BadRequestError } from 'routing-controllers';
 import { User, Like } from '../db/entities';
 
@@ -7,6 +9,16 @@ export default class MediaService {
 
   constructor(private pgConn: typeorm.Connection) {
     this.likeRepo = this.pgConn.getRepository(Like);
+  }
+
+  getImage(imageFileName: string): Buffer | undefined {
+    try {
+      const buffer = fs.readFileSync(`${IMG_DIRECTORY_PATH}/${imageFileName}`);
+
+      return buffer;
+    } catch (err) {
+      return undefined;
+    }
   }
 
   async getLikesByArtId(artId: string): Promise<Like[]> {
