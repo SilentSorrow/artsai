@@ -1,5 +1,6 @@
 export const API_ROOT = '/api';
 export const API_PORT = 3000;
+export const FRONT_ULR = 'http://localhost:4000';
 export const DB_TYPE = 'postgres';
 export const PG_HOST = 'psql';
 export const PG_PORT = 5432;

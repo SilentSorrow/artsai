@@ -15,13 +15,11 @@ export default class UserController {
   async create(
     @BodyParam('username', { required: true }) username: string,
     @BodyParam('email', { required: true }) email: string,
-    @BodyParam('about', { required: true }) about: string,
     @BodyParam('password', { required: true }) password: string
   ) {
     const user = {
       username,
       email,
-      about,
       password,
     } as User;
     const created = await this.userService.save(user);

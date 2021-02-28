@@ -10,7 +10,7 @@ type OmitedUser = {
   id: string;
   username: string;
   email: string;
-  about: string;
+  about?: string;
   profileImage?: string;
   isVerified: boolean;
   createdAt: Date;

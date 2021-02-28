@@ -12,8 +12,8 @@ export class User {
   @Column({ name: 'email', type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column({ name: 'about', type: 'varchar', length: 255 })
-  about: string;
+  @Column({ name: 'about', type: 'varchar', length: 255, nullable: true })
+  about?: string;
 
   @Column({ name: 'profile_image', type: 'varchar', length: 255, nullable: true })
   profileImage?: string;

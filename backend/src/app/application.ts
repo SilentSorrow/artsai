@@ -8,6 +8,7 @@ import { Container } from 'typedi';
 import {
   API_ROOT,
   API_PORT,
+  FRONT_ULR,
   DB_TYPE,
   PG_HOST,
   PG_PORT,
@@ -58,7 +59,7 @@ export default class Application {
   init(): void {
     this.application.use(bodyParser.json());
     this.application.use(express.urlencoded({ extended: false }));
-    this.application.use(cors()); //{origin: "http://localhost:4000",credentials: true,})
+    this.application.use(cors({ origin: FRONT_ULR, credentials: true }));
   }
 
   listen(port: number = API_PORT): void {
