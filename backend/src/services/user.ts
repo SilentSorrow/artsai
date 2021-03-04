@@ -3,17 +3,18 @@ import * as fs from 'fs';
 import { IMG_DIRECTORY_PATH } from '../app/constants';
 import { Crypto, Validator, omitUser } from '../utils';
 import { ValidationError } from '../errors';
+import { AuthService } from '.';
 import { User } from '../db/entities';
-import { OmitedUser } from '../types';
+import { OmitedUser, LoginData } from '../types';
 
 export default class UserService {
   private userRepo: typeorm.Repository<User>;
 
-  constructor(private pgConn: typeorm.Connection) {
+  constructor(private pgConn: typeorm.Connection, private authService: AuthService) {
     this.userRepo = this.pgConn.getRepository(User);
   }
 
-  async save(user: User): Promise<OmitedUser> {
+  async save(user: User): Promise<LoginData> {
     user.username = Validator.validateUsername(user.username);
     user.password = Validator.validatePassword(user.password);
     if (!Validator.isEmailValid(user.email)) {
@@ -31,7 +32,7 @@ export default class UserService {
       throw new ValidationError('Invalid user data', err.message);
     }
 
-    return omitUser(saved);
+    return this.authService.setToken(user);
   }
 
   async changeProfileImage(profileImage: string, user: User): Promise<OmitedUser> {

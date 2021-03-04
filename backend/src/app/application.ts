@@ -80,8 +80,8 @@ export default class Application {
     const catalogService = new CatalogService(pgConn);
     const mediaService = new MediaService(pgConn);
     const artService = new ArtService(pgConn, catalogService);
-    const userService = new UserService(pgConn);
     const authService = new AuthService(pgConn, redisConn);
+    const userService = new UserService(pgConn, authService);
     Container.set(ArtService, artService);
     Container.set(AuthService, authService);
     Container.set(CatalogService, catalogService);

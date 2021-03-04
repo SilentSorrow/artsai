@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Button, Center, Heading, HStack, Input, Text, VStack } from '@chakra-ui/react';
+import { verifyCode, sendCode } from '../services';
 
-const VerifyAccount = () => {
+const VerifyAccount = ({ history }) => {
   const [code, setCode] = useState('');
+  const [error, setError] = useState();
 
   const handleChange = (event) => {
     const inputCode = event.target.value;
@@ -11,9 +13,23 @@ const VerifyAccount = () => {
     }
   };
 
+  const handleVerification = async () => {
+    const res = await verifyCode(code);
+
+    if (res.data.error?.message) {
+      setError(res.data.error.message);
+    } else {
+      history.push('');
+    }
+  };
+
+  const handleResend = async () => {
+    await sendCode();
+  };
+
   return (
     <Center h="100vh" bg="main.2">
-      <Box w="350px" h="37vh" bg="main.1" rounded="md" boxShadow="dark-lg">
+      <Box w="350px" h="275px" bg="main.1" rounded="md" boxShadow="dark-lg">
         <Center h="100%" w="100%">
           <VStack spacing="10px">
             <VStack spacing="10px">
@@ -29,11 +45,16 @@ const VerifyAccount = () => {
                 <Input type="code" textColor="main.white" w="90px" h="35px" value={code} onChange={handleChange} />
               </HStack>
             </VStack>
+            {error && (
+              <Text fontSize="15px" color="main.red">
+                {error}
+              </Text>
+            )}
             <HStack spacing="30px" paddingTop="10px">
-              <Button variant="solid" w="230px" _focus={{ outline: 'none' }}>
+              <Button variant="solid" w="230px" _focus={{ outline: 'none' }} onClick={handleVerification}>
                 Submit
               </Button>
-              <Button variant="unstyled" color="main.white" bg="main.1" _focus={{ outline: 'none' }}>
+              <Button variant="unstyled" color="main.white" bg="main.1" _focus={{ outline: 'none' }} onClick={handleResend}>
                 Resend
               </Button>
             </HStack>

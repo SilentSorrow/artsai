@@ -13,26 +13,32 @@ import {
 } from '@chakra-ui/react';
 import { EmailIcon, LockIcon, StarIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
-import { signUp } from '../services';
+import { signUp, sendCode } from '../services';
 
 const SignUp = ({ history }) => {
   const [error, setError] = useState();
   const { register, handleSubmit } = useForm();
 
   const onSignUp = async (formData) => {
-    const res = await signUp(formData);
-
-    if (res.data.error?.message) {
-      setError(res.data.error.message);
+    if (formData.password !== formData.confirmPassword) {
+      setError('The password confirmation failed')
     } else {
-      history.push('verify-account');
+      const res = await signUp(formData);
+
+      if (res.data.error?.message) {
+        setError(res.data.error.message);
+      } else {
+        localStorage.setItem('app-auth', res.data.token);
+        await sendCode();
+        history.push('verify-account');
+      }
     }
   };
 
   return (
     <>
       <Center h="100vh" bg="main.2">
-        <Box w="350px" h="60vh" bg="main.1" rounded="md" boxShadow="dark-lg">
+        <Box w="350px" h="500px" bg="main.1" rounded="md" boxShadow="dark-lg">
           <Center h="100%" w="100%">
             <VStack spacing="10px">
               <VStack>

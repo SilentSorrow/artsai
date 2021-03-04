@@ -21,15 +21,12 @@ export default class AuthService {
       throw new UnauthorizedError(`Username and password combination didn't work`);
     }
 
-    const token = Crypto.createRandomString();
-    this.redisConn.setAsync(token, user.id, 'EX', Number(process.env.TOKEN_EXP_TIME));
-
-    return { user: omitUser(user), token } as LoginData;
+    return this.setToken(user);
   }
 
   async sendCode(user: User): Promise<boolean> {
     const code = this.generateRandomCode();
-    this.redisConn.setAsync(String(code), user.id, 'EX', Number(process.env.CODE_EXP_TIME));
+    await this.redisConn.setAsync(String(code), user.id, 'EX', Number(process.env.CODE_EXP_TIME));
 
     sendEmail(user.email, code);
 
@@ -44,9 +41,16 @@ export default class AuthService {
 
     await this.userRepo.update({ id: user.id }, { isVerified: true });
 
-    this.redisConn.delAsync(code);
+    await this.redisConn.delAsync(code);
 
     return true;
+  }
+
+  async setToken(user: User): Promise<LoginData> {
+    const token = Crypto.createRandomString();
+    this.redisConn.setAsync(token, user.id, 'EX', Number(process.env.TOKEN_EXP_TIME));
+
+    return { user: omitUser(user), token };
   }
 
   generateRandomCode(): number {

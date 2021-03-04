@@ -1,50 +1,81 @@
-import React from 'react';
-import { Box, Center, Image, Tab, TabList, TabPanel, TabPanels, Tabs, VStack } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Box, Center, Image, Tab, TabList, TabPanel, TabPanels, Tabs, Text, VStack } from '@chakra-ui/react';
 import Navbar from '../components/Navbar';
+import ImgGrid from '../components/ImgGrid';
+import { getUser } from '../services';
 
 const Profile = () => {
+  const [userProfile, setUserProfile] = useState();
+  const { username } = useParams();
+
+  useEffect(() => {
+    (async () => {
+      const res = await getUser(username);
+      if (res.data.error) {
+
+      } else {
+        setUserProfile(res.data);
+      }
+    })();
+  }, [username]);
+
   return (
     <>
       <Navbar />
       <VStack spacing="0px">
-        <Center h="300px" w="100%" bg="blue">
+        <Center h="300px" w="100%" bgImage="url(./img/default-profile-background.jpg)" bgPosition="bottom">
+          <VStack>
           <Image
+            border="2px"
             borderRadius="full"
-            boxSize="150px"
-            src="https://sun9-19.userapi.com/impg/c857624/v857624916/17b7ce/gYKFJBlhRww.jpg?size=600x300&quality=96&sign=0afe9c9143d5e1a18cf2023644a0f3d8&type=album"
+            boxSize="170px"
+            filter="invert(23%) sepia(100%) saturate(2247%) hue-rotate(89deg) brightness(95%) contrast(93%)"
+            src="./img/default-profile-image.png"
             fit="cover"
           />
+          {userProfile?.username && (
+            <Text fontSize="25px" color="main.white">
+              {userProfile.username}
+            </Text>
+          )}
+          {userProfile?.about && (
+            <Text w="700px" fontSize="15px" color="main.white" align="center">
+              {userProfile.about}
+            </Text>
+          )}
+          </VStack>
         </Center>
         <Box h="40px" w="100%" bg="main.1">
           <Tabs h="100%" variant="unstyled" align="center" _focus={{ outline: 'none' }}>
             <TabList color="main.white">
               <Tab
-                _selected={{ borderBottom: '2px', borderBottomColor: 'main.green', color: 'main.green' }}
+                _selected={{ color: 'main.green' }}
                 _focus={{ outline: 'none' }}
               >
                 Portfolio
               </Tab>
               <Tab
-                _selected={{ borderBottom: '2px', borderBottomColor: 'main.green', color: 'main.green' }}
+                _selected={{ color: 'main.green' }}
                 _focus={{ outline: 'none' }}
               >
                 Following
               </Tab>
               <Tab
-                _selected={{ borderBottom: '2px', borderBottomColor: 'main.green', color: 'main.green' }}
+                _selected={{ color: 'main.green' }}
                 _focus={{ outline: 'none' }}
               >
                 Followers
               </Tab>
               <Tab
-                _selected={{ borderBottom: '2px', borderBottomColor: 'main.green', color: 'main.green' }}
+                _selected={{ color: 'main.green' }}
                 _focus={{ outline: 'none' }}
               >
                 Likes
               </Tab>
             </TabList>
-            <TabPanels>
-              <TabPanel>Portfolio</TabPanel>
+            <TabPanels bg="main.3">
+              <TabPanel padding="0px"><ImgGrid /></TabPanel>
               <TabPanel>Following</TabPanel>
               <TabPanel>Followers</TabPanel>
               <TabPanel>Likes</TabPanel>

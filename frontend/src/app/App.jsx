@@ -9,7 +9,7 @@ const App = () => {
     <Switch>
       <Route exact path="/signup" component={SignUp} />
       <Route exact path="/verify-account" component={VerifyAccount} /> {/*  */}
-      <Route exact path="/" component={Profile} /> {/*  */}
+      <Route exact path="/:username" component={Profile} /> {/*  */}
     </Switch>
   );
 };
