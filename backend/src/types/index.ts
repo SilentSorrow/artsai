@@ -34,6 +34,7 @@ type ArtData = {
 
 type AppRequest = Request & {
   user: User;
+  token: string;
 };
 
 export { LoginData, OmitedUser, OmitedArt, ArtData, AppRequest };

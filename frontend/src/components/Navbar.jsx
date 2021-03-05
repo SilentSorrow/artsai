@@ -1,27 +1,44 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
+  Button,
   Flex,
   Heading,
+  HStack,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
   MenuList,
   Spacer,
 } from '@chakra-ui/react';
 import LoginModal from '../modal/LoginModal';
-import { HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
+import { CloseIcon, HamburgerIcon, PlusSquareIcon, SearchIcon, SettingsIcon, StarIcon } from '@chakra-ui/icons';
+import { UserContext } from '../app/UserContext';
+import { logout } from '../services';
 
 const Navbar = () => {
+  const user = useContext(UserContext);
+  const history = useHistory();
+
+  const logoutUser = async () => {
+    await logout();
+    localStorage.removeItem('app-auth');
+  };
+
   const renderAuthButtons = () => {
     return (
-      <>
+      <HStack spacing="20px">
         <LoginModal />
-      </>
+        <Button type="submit" variant="solid" w="100px" _focus={{ outline: 'none' }}>
+          Sign Up
+        </Button>
+      </HStack>
     );
   };
 
@@ -29,9 +46,18 @@ const Navbar = () => {
     return (
       <Menu>
         <MenuButton as={IconButton} icon={<HamburgerIcon />} h="35px" w="55px" />
-        <MenuList w="50px">
-          <MenuItem>Something</MenuItem>
-          <MenuItem>Something</MenuItem>
+        <MenuList>
+          <MenuItem icon={<StarIcon />} onClick={() => history.push(user.username)}>
+            My proflile
+          </MenuItem>
+          <MenuItem icon={<PlusSquareIcon />}>Add to portfolio</MenuItem>
+          <MenuItem icon={<SettingsIcon />} onClick={() => history.push('/account-settings')}>
+            Settings
+          </MenuItem>
+          <MenuDivider />
+          <MenuItem icon={<CloseIcon />} onClick={logoutUser}>
+            Logout
+          </MenuItem>
         </MenuList>
       </Menu>
     );
@@ -61,7 +87,7 @@ const Navbar = () => {
           </InputGroup>
         </Box>
         <Spacer />
-        {localStorage.getItem('app-auth') ? renderAccoutMenu() : renderAuthButtons()}
+        {user ? renderAccoutMenu() : renderAuthButtons()}
       </Flex>
     </Box>
   );

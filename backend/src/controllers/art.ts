@@ -56,6 +56,11 @@ export default class ArtController {
     return await this.artService.getTop();
   }
 
+  @Get('/:userId')
+  async getAllUserArt(@Param('userId') userId: string) {
+    return await this.artService.getAllUserArt(userId);
+  }
+
   @Get('/details/:id')
   async getById(@Param('id') id: string) {
     return await this.artService.getById(id);

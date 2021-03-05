@@ -4,7 +4,7 @@ import { CatalogService } from '.';
 import { TOP_ART_COUNT } from '../app/constants';
 import { Art, Tag, Type, User } from '../db/entities';
 import { ArtData, OmitedArt } from '../types';
-import { omitUser } from '../utils';
+import { omitArt, omitUser } from '../utils';
 import { UnauthorizedError } from 'routing-controllers';
 
 export default class ArtService {
@@ -79,7 +79,7 @@ export default class ArtService {
       `
       SELECT id, main_image, created_At FROM art WHERE id
       IN (SELECT art_id FROM "like" GROUP BY art_id ORDER BY count(*) DESC LIMIT $1)
-      `, // something with date, like created wihin last week
+      `, // something with date, like created within last week
       [TOP_ART_COUNT]
     );
 
@@ -93,5 +93,12 @@ export default class ArtService {
     }
 
     return art as Art;
+  }
+
+  async getAllUserArt(userId: string): Promise<OmitedArt[]> {
+    const user = await this.userRepo.findOne({ id: userId });
+    const art = await this.artRepo.find({ user });
+
+    return art.map((a) => omitArt(a));
   }
 }

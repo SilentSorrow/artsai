@@ -1,4 +1,4 @@
-import { BodyParam, Param, Post, Put, Req, JsonController, UseBefore, Get } from 'routing-controllers';
+import { BodyParam, Param, Post, Put, Req, JsonController, UseBefore, Get, Delete } from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { AuthService } from '../services';
@@ -18,6 +18,12 @@ export default class AuthController {
   }
 
   @UseBefore(userAuth())
+  @Delete('/logout')
+  async logout(@Req() req: AppRequest) {
+    return await this.authService.logout(req.token);
+  }
+
+  @UseBefore(userAuth())
   @Get('/send-code')
   async sendCode(@Req() req: AppRequest) {
     return await this.authService.sendCode(req.user);
@@ -27,5 +33,10 @@ export default class AuthController {
   @Put('/verify-code/:code')
   async verifyCode(@Param('code') code: string, @Req() req: AppRequest) {
     return await this.authService.verifyCode(code, req.user);
+  }
+
+  @Get('/check-token/:token')
+  async checkToken(@Param('token') token: string) {
+    return await this.authService.checkToken(token);
   }
 }

@@ -33,6 +33,7 @@ const authMiddleware = (relations: string[]): Function => {
       }
 
       req.user = user;
+      req.token = token as string;
       next();
     } catch (err) {
       next(err);

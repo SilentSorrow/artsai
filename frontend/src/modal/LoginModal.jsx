@@ -38,7 +38,7 @@ const LoginModal = () => {
 
   return (
     <>
-      <Button h="35px" onClick={onOpen} variant="solid">
+      <Button h="35px" variant="unstyled" color="main.white" _focus={{ outline: 'none' }} onClick={onOpen}>
         Login
       </Button>
 

@@ -29,6 +29,10 @@ export const login = async (loginData) => {
   return await api.post('auth/login', loginData);
 };
 
+export const logout = async () => {
+  return await api.post('auth/logout');
+};
+
 export const sendCode = async () => {
   return await api.get('auth/send-code');
 };
@@ -37,7 +41,14 @@ export const verifyCode = async (code) => {
   return await api.put('auth/verify-code/' + code);
 };
 
+export const checkToken = async (token) => {
+  return await api.get('auth/check-token/' + token);
+};
+
 //art
+export const getAllUserArt = async (userId) => {
+  return await api.get('art/' + userId);
+};
 
 //media
 

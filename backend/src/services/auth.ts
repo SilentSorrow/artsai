@@ -3,7 +3,7 @@ import { UnauthorizedError } from 'routing-controllers';
 import { Crypto, Validator, omitUser, sendEmail } from '../utils';
 import { AsyncRedis } from '../db';
 import { User } from '../db/entities';
-import { LoginData } from '../types';
+import { LoginData, OmitedUser } from '../types';
 
 export default class AuthService {
   private userRepo: typeorm.Repository<User>;
@@ -22,6 +22,10 @@ export default class AuthService {
     }
 
     return this.setToken(user);
+  }
+
+  async logout(token: string): Promise<number> {
+    return await this.redisConn.delAsync(token);
   }
 
   async sendCode(user: User): Promise<boolean> {
@@ -44,6 +48,17 @@ export default class AuthService {
     await this.redisConn.delAsync(code);
 
     return true;
+  }
+
+  async checkToken(token: string): Promise<OmitedUser | undefined> {
+    const userId = await this.redisConn.getAsync(token);
+    const user = await this.userRepo.findOne({ id: userId as string });
+
+    if (user) {
+      return omitUser(user);
+    } else {
+      return user;
+    }
   }
 
   async setToken(user: User): Promise<LoginData> {
