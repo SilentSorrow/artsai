@@ -35,6 +35,12 @@ export default class UserService {
     return this.authService.setToken(user);
   }
 
+  async update(user: User): Promise<any> {
+    user.username = Validator.validateUsername(user.username);
+
+    return await this.userRepo.update({ id: user.id }, { username: user.username, about: user.about });
+  }
+
   async changeProfileImage(profileImage: string, user: User): Promise<OmitedUser> {
     const oldUser = await this.userRepo.findOne({ id: user.id });
     if (oldUser?.profileImage) {
@@ -47,6 +53,18 @@ export default class UserService {
     return omitUser(user);
   }
 
+  async changeBackgroundImage(backgroundImage: string, user: User): Promise<OmitedUser> {
+    const oldUser = await this.userRepo.findOne({ id: user.id });
+    if (oldUser?.backgroundImage) {
+      fs.unlinkSync(`${process.cwd()}/${IMG_DIRECTORY_PATH}/${oldUser?.backgroundImage}`);
+    }
+    await this.userRepo.update({ id: user.id }, { backgroundImage });
+
+    user.backgroundImage = backgroundImage;
+
+    return omitUser(user);
+  }
+
   async getByUsername(username: string): Promise<OmitedUser | undefined> {
     const user = await this.userRepo.findOne({ username });
     if (user) {
@@ -54,5 +72,9 @@ export default class UserService {
     }
 
     return user;
+  }
+
+  async delete(user: User): Promise<User> {
+    return await this.userRepo.remove(user);
   }
 }

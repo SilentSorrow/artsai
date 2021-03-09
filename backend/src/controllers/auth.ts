@@ -35,8 +35,9 @@ export default class AuthController {
     return await this.authService.verifyCode(code, req.user);
   }
 
-  @Get('/check-token/:token')
-  async checkToken(@Param('token') token: string) {
-    return await this.authService.checkToken(token);
+  @UseBefore(userAuth())
+  @Get('/check-token')
+  async checkToken(@Req() req: AppRequest) {
+    return await this.authService.checkToken(req.token);
   }
 }

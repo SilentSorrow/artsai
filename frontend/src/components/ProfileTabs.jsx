@@ -35,13 +35,7 @@ const ProfileTabs = ({ userId }) => {
       </TabList>
       <TabPanels bg="main.3">
         <TabPanel padding="0px">
-          {portfolio?.length ? (
-            <ImgGrid userId={userId} art={portfolio} />
-          ) : (
-            <Heading size="sm" color="main.white">
-              No art yet...
-            </Heading>
-          )}
+          <ImgGrid art={portfolio} />
         </TabPanel>
         <TabPanel>Following</TabPanel>
         <TabPanel>Followers</TabPanel>

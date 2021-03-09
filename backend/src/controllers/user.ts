@@ -1,4 +1,15 @@
-import { BodyParam, Post, JsonController, UploadedFile, Put, UseBefore, Req, Get, Param } from 'routing-controllers';
+import {
+  BodyParam,
+  Post,
+  JsonController,
+  UploadedFile,
+  Put,
+  UseBefore,
+  Req,
+  Get,
+  Param,
+  Delete,
+} from 'routing-controllers';
 import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { getFileUploadOptions } from './options/fileUploadOptions';
@@ -27,6 +38,16 @@ export default class UserController {
     return created;
   }
 
+  @UseBefore(userAuth())
+  @Put('/')
+  async update(
+    @BodyParam('username', { required: true }) username: string,
+    @BodyParam('about', { required: true }) about: string,
+    @Req() req: AppRequest
+  ) {
+    return await this.userService.update({ id: req.user.id, username, about } as User);
+  }
+
   @Get('/:username')
   async getByUsername(@Param('username') username: string) {
     return await this.userService.getByUsername(username);
@@ -40,5 +61,21 @@ export default class UserController {
     @Req() req: AppRequest
   ) {
     return await this.userService.changeProfileImage(file.filename, req.user);
+  }
+
+  @UseBefore(userAuth())
+  @Put('/change-background-image')
+  async changeBackgroundImage(
+    @UploadedFile('file', { options: getFileUploadOptions(), required: true })
+    file: Express.Multer.File,
+    @Req() req: AppRequest
+  ) {
+    return await this.userService.changeBackgroundImage(file.filename, req.user);
+  }
+
+  @UseBefore(userAuth())
+  @Delete('/delete-account')
+  async delete(@Req() req: AppRequest) {
+    return await this.userService.delete(req.user);
   }
 }

@@ -22,9 +22,12 @@ export default class MediaService {
   }
 
   async getLikesByArtId(artId: string): Promise<Like[]> {
-    const likeIds = await this.pgConn.query(`SELECT * FROM "like" WHERE art_id = $1`, [artId]);
+    const likes = await this.pgConn.query(
+      `SELECT id, art_id as "artId", user_id as "userId", created_at as "createdAt" FROM "like" WHERE art_id = $1`,
+      [artId]
+    );
 
-    return likeIds;
+    return likes;
   }
 
   async toggleLike(artId: string, user: User): Promise<void> {

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Box,
@@ -18,12 +18,13 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import LoginModal from '../modal/LoginModal';
+import AddToPortfolioModal from '../modal/AddToPortfolioModal';
 import { CloseIcon, HamburgerIcon, PlusSquareIcon, SearchIcon, SettingsIcon, StarIcon } from '@chakra-ui/icons';
 import { UserContext } from '../app/UserContext';
 import { logout } from '../services';
 
 const Navbar = () => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const history = useHistory();
 
   const logoutUser = async () => {
@@ -35,7 +36,13 @@ const Navbar = () => {
     return (
       <HStack spacing="20px">
         <LoginModal />
-        <Button type="submit" variant="solid" w="100px" _focus={{ outline: 'none' }}>
+        <Button
+          type="submit"
+          variant="solid"
+          w="100px"
+          _focus={{ outline: 'none' }}
+          onClick={() => history.push('/signup')}
+        >
           Sign Up
         </Button>
       </HStack>
@@ -50,9 +57,11 @@ const Navbar = () => {
           <MenuItem icon={<StarIcon />} onClick={() => history.push(user.username)}>
             My proflile
           </MenuItem>
-          <MenuItem icon={<PlusSquareIcon />}>Add to portfolio</MenuItem>
+          <MenuItem icon={<PlusSquareIcon />}>
+            <AddToPortfolioModal />
+          </MenuItem>
           <MenuItem icon={<SettingsIcon />} onClick={() => history.push('/account-settings')}>
-            Settings
+            Account settings
           </MenuItem>
           <MenuDivider />
           <MenuItem icon={<CloseIcon />} onClick={logoutUser}>

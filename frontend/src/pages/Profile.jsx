@@ -24,14 +24,31 @@ const Profile = () => {
     <>
       <Navbar />
       <VStack spacing="0px">
-        <Center h="300px" w="100%" bgImage="url(./img/default-profile-background.jpg)" bgPosition="bottom">
+        <Center
+          h="300px"
+          w="100%"
+          bgImage={
+            userProfile?.backgroundImage
+              ? 'url(http://localhost:3000/api/images/' + userProfile?.backgroundImage + ')'
+              : 'url(../img/default-profile-background.jpg)'
+          }
+          bgPosition="bottom"
+        >
           <VStack>
             <Image
               border="2px"
               borderRadius="full"
+              borderColor="main.green"
               boxSize="170px"
-              filter="invert(23%) sepia(100%) saturate(2247%) hue-rotate(89deg) brightness(95%) contrast(93%)"
-              src="./img/default-profile-image.png"
+              filter={
+                !userProfile?.profileImage &&
+                'invert(23%) sepia(100%) saturate(2247%) hue-rotate(89deg) brightness(95%) contrast(93%)'
+              }
+              src={
+                userProfile?.profileImage
+                  ? 'http://localhost:3000/api/images/' + userProfile?.profileImage
+                  : '../img/default-profile-image.png'
+              }
               fit="cover"
             />
             {userProfile?.username && (

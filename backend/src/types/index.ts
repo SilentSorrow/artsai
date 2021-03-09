@@ -12,6 +12,7 @@ type OmitedUser = {
   email: string;
   about?: string;
   profileImage?: string;
+  backgroundImageImage?: string;
   isVerified: boolean;
   createdAt: Date;
 };
