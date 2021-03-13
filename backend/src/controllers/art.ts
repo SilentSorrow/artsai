@@ -46,9 +46,9 @@ export default class ArtController {
   }
 
   @UseBefore(userAuth())
-  @Delete('/:id')
-  async delete(@Param('id') id: string, @Req() req: AppRequest) {
-    return await this.artService.delete(id, req.user);
+  @Delete('/:artId')
+  async delete(@Param('artId') artId: string, @Req() req: AppRequest) {
+    return await this.artService.delete(artId, req.user);
   }
 
   @Get('/top')
@@ -61,20 +61,25 @@ export default class ArtController {
     return await this.artService.getAllUserArt(userId);
   }
 
-  @Get('/details/:id')
-  async getById(@Param('id') id: string) {
-    return await this.artService.getById(id);
+  @Get('/details/:artId')
+  async getById(@Param('artId') artId: string) {
+    return await this.artService.getById(artId);
   }
 
-  @Get('/details/:id/likes')
-  async getLikesByArtId(@Param('id') id: string) {
-    return await this.mediaService.getLikesByArtId(id);
+  @Get('/liked/:userId')
+  async getLiked(@Param('userId') userId: string) {
+    return await this.artService.getLiked(userId);
+  }
+
+  @Get('/details/:artId/likes')
+  async getLikesByArtId(@Param('artId') artId: string) {
+    return await this.mediaService.getLikesByArtId(artId);
   }
 
   @UseBefore(userAuth())
-  @Put('/toggle-like/:id')
-  async toggleLike(@Param('id') id: string, @Req() req: AppRequest) {
-    await this.mediaService.toggleLike(id, req.user);
+  @Put('/toggle-like/:artId')
+  async toggleLike(@Param('artId') artId: string, @Req() req: AppRequest) {
+    await this.mediaService.toggleLike(artId, req.user);
 
     return [];
   }

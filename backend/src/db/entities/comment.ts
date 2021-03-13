@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Art, User } from '.';
+import { OmitedUser } from '../../types';
 
 @Entity('comment')
 export class Comment {
@@ -10,4 +12,12 @@ export class Comment {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
+
+  @ManyToOne(() => Art, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'art_id' })
+  art: Art;
+
+  @ManyToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User | OmitedUser;
 }

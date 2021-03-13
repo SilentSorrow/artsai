@@ -1,13 +1,13 @@
 import * as typeorm from 'typeorm';
 import * as redis from 'redis';
 import { promisify } from 'util';
-import { Art, Subject, Tag, Type, User, Like } from './entities';
+import { Art, Subject, Tag, Type, User, Like, Follow, Comment } from './entities';
 import { Subject1613170754165, Type1613165728381 } from './seeds';
 
 const createPgConnection = async (connOptions: typeorm.ConnectionOptions): Promise<typeorm.Connection> => {
   const options = {
     ...connOptions,
-    entities: [Art, Subject, Tag, Type, User, Like],
+    entities: [Art, Subject, Tag, Type, User, Like, Follow, Comment],
     migrations: [Subject1613170754165, Type1613165728381],
   };
 

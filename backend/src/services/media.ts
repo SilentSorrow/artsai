@@ -2,13 +2,17 @@ import * as typeorm from 'typeorm';
 import fs from 'fs';
 import { IMG_DIRECTORY_PATH } from '../app/constants';
 import { BadRequestError } from 'routing-controllers';
-import { User, Like } from '../db/entities';
+import { User, Like, Follow } from '../db/entities';
+import { omitUser } from '../utils';
+import { OmitedUser } from 'src/types';
 
 export default class MediaService {
   private likeRepo: typeorm.Repository<Like>;
+  private followRepo: typeorm.Repository<Follow>;
 
   constructor(private pgConn: typeorm.Connection) {
     this.likeRepo = this.pgConn.getRepository(Like);
+    this.followRepo = this.pgConn.getRepository(Follow);
   }
 
   getImage(imageFileName: string): Buffer | undefined {
@@ -50,6 +54,60 @@ export default class MediaService {
         await this.pgConn.query(`INSERT INTO "like"(art_id, user_id) VALUES($1, $2)`, [artId, user.id]);
       }
     } catch (err) {
+      throw new BadRequestError('Something went wrong...');
+    }
+  }
+
+  async getFollows(userId: string, whereField: string): Promise<Follow[]> {
+    const follows = await this.followRepo.find({
+      where: {
+        [whereField]: {
+          id: userId,
+        },
+      },
+      relations: ['user', 'follower'],
+    });
+
+    return follows;
+  }
+
+  async isFollowing(follower: User, userId: string): Promise<boolean> {
+    const follow = await this.followRepo.findOne({
+      where: {
+        follower: {
+          id: follower.id,
+        },
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['user'],
+    });
+
+    return follow ? true : false;
+  }
+
+  async toggleFollow(follower: User, userId: string): Promise<void> {
+    try {
+      const follow = await this.followRepo.findOne({
+        where: {
+          follower: {
+            id: follower.id,
+          },
+          user: {
+            id: userId,
+          },
+        },
+        relations: ['user'],
+      });
+
+      if (follow) {
+        await this.followRepo.remove(follow);
+      } else {
+        await this.pgConn.query(`INSERT INTO follow(follower_id, user_id) VALUES($1, $2)`, [follower.id, userId]);
+      }
+    } catch (err) {
+      console.log(err);
       throw new BadRequestError('Something went wrong...');
     }
   }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Box,
@@ -24,6 +24,7 @@ import { UserContext } from '../app/UserContext';
 import { logout } from '../services';
 
 const Navbar = () => {
+  const addRef = useRef();
   const { user } = useContext(UserContext);
   const history = useHistory();
 
@@ -51,24 +52,28 @@ const Navbar = () => {
 
   const renderAccoutMenu = () => {
     return (
-      <Menu>
-        <MenuButton as={IconButton} icon={<HamburgerIcon />} h="35px" w="55px" />
-        <MenuList>
-          <MenuItem icon={<StarIcon />} onClick={() => history.push(user.username)}>
-            My proflile
-          </MenuItem>
-          <MenuItem icon={<PlusSquareIcon />}>
-            <AddToPortfolioModal />
-          </MenuItem>
-          <MenuItem icon={<SettingsIcon />} onClick={() => history.push('/account-settings')}>
-            Account settings
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem icon={<CloseIcon />} onClick={logoutUser}>
-            Logout
-          </MenuItem>
-        </MenuList>
-      </Menu>
+      <>
+        <AddToPortfolioModal addRef={addRef} />
+
+        <Menu>
+          <MenuButton as={IconButton} icon={<HamburgerIcon />} h="35px" w="55px" />
+          <MenuList>
+            <MenuItem icon={<StarIcon />} onClick={() => history.push(user.username)}>
+              My proflile
+            </MenuItem>
+            <MenuItem icon={<PlusSquareIcon />} onClick={() => addRef.current.click()}>
+              Add to portfolio
+            </MenuItem>
+            <MenuItem icon={<SettingsIcon />} onClick={() => history.push('/account-settings')}>
+              Account settings
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem icon={<CloseIcon />} onClick={logoutUser}>
+              Logout
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      </>
     );
   };
 

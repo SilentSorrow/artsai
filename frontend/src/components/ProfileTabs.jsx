@@ -1,18 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { Heading, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import ImgGrid from './ImgGrid';
-import { getAllUserArt } from '../services';
+import UserGrid from './UserGrid';
+import { getAllUserArt, getLiked, getFollowers, getFollowing } from '../services';
 
 const ProfileTabs = ({ userId }) => {
-  const [portfolio, setPortfolio] = useState();
+  const [portfolio, setPortfolio] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [liked, setLiked] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const res = await getAllUserArt(userId);
-      if (res.data.error) {
+      const portfRes = await getAllUserArt(userId);
+      if (portfRes.data.error) {
         //whatever
       } else {
-        setPortfolio(res.data);
+        setPortfolio(portfRes.data);
+      }
+
+      const likedRes = await getLiked(userId);
+      if (likedRes.data.error) {
+        //whatever
+      } else {
+        setLiked(likedRes.data);
+      }
+
+      const followersRes = await getFollowers(userId);
+      if (followersRes.data.error) {
+        //whatever
+      } else {
+        setFollowers(followersRes.data);
+      }
+
+      const followingRes = await getFollowing(userId);
+      if (followingRes.data.error) {
+        //whatever
+      } else {
+        setFollowing(followingRes.data);
       }
     })();
   }, [userId]);
@@ -21,25 +46,31 @@ const ProfileTabs = ({ userId }) => {
     <Tabs h="100%" variant="unstyled" align="center" _focus={{ outline: 'none' }}>
       <TabList color="main.white">
         <Tab _selected={{ color: 'main.green' }} _focus={{ outline: 'none' }}>
-          Portfolio
+          ({portfolio.length}) Portfolio
         </Tab>
         <Tab _selected={{ color: 'main.green' }} _focus={{ outline: 'none' }}>
-          Following
+          ({following.length}) Following
         </Tab>
         <Tab _selected={{ color: 'main.green' }} _focus={{ outline: 'none' }}>
-          Followers
+          ({followers.length}) Followers
         </Tab>
         <Tab _selected={{ color: 'main.green' }} _focus={{ outline: 'none' }}>
-          Likes
+          ({liked.length}) Likes
         </Tab>
       </TabList>
       <TabPanels bg="main.3">
         <TabPanel padding="0px">
           <ImgGrid art={portfolio} />
         </TabPanel>
-        <TabPanel>Following</TabPanel>
-        <TabPanel>Followers</TabPanel>
-        <TabPanel>Likes</TabPanel>
+        <TabPanel padding="0px">
+          <UserGrid users={following} />
+        </TabPanel>
+        <TabPanel padding="0px">
+          <UserGrid users={followers} />
+        </TabPanel>
+        <TabPanel padding="0px">
+          <ImgGrid art={liked} />
+        </TabPanel>
       </TabPanels>
     </Tabs>
   );

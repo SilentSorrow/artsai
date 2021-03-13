@@ -40,6 +40,22 @@ export const update = async (updateData) => {
   return await api.put('users/', updateData);
 };
 
+export const toggleFollow = async (userId) => {
+  return await api.put('users/toggle-follow/' + userId);
+};
+
+export const isFollowing = async (userId) => {
+  return await api.get('users/is-following/' + userId);
+};
+
+export const getFollowers = async (userId) => {
+  return await api.get('users/' + userId + '/followers')
+};
+
+export const getFollowing = async (userId) => {
+  return await api.get('users/' + userId + '/following')
+};
+
 //auth
 export const login = async (loginData) => {
   return await api.post('auth/login', loginData);
@@ -84,6 +100,10 @@ export const getLikes = async (artId) => {
 
 export const toggleLike = async (artId) => {
   return await api.put('art/toggle-like/' + artId); 
+};
+
+export const getLiked = async (userId) => {
+  return await api.get('art/liked/' + userId);
 };
 
 //catalog

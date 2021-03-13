@@ -1,11 +1,11 @@
 import * as typeorm from 'typeorm';
+import { UnauthorizedError } from 'routing-controllers';
 import { ValidationError } from '../errors';
 import { CatalogService } from '.';
 import { TOP_ART_COUNT } from '../app/constants';
 import { Art, Tag, Type, User } from '../db/entities';
 import { ArtData, OmitedArt } from '../types';
 import { omitArt, omitUser } from '../utils';
-import { UnauthorizedError } from 'routing-controllers';
 
 export default class ArtService {
   private artRepo: typeorm.Repository<Art>;
@@ -77,7 +77,7 @@ export default class ArtService {
   async getTop(): Promise<OmitedArt[]> {
     const top = await this.pgConn.query(
       `
-      SELECT id, main_image, created_At FROM art WHERE id
+      SELECT id, main_image as "mainImage", created_At as "createdAt" FROM art WHERE id
       IN (SELECT art_id FROM "like" GROUP BY art_id ORDER BY count(*) DESC LIMIT $1)
       `, // something with date, like created within last week
       [TOP_ART_COUNT]
@@ -100,5 +100,17 @@ export default class ArtService {
     const art = await this.artRepo.find({ user });
 
     return art.map((a) => omitArt(a));
+  }
+
+  async getLiked(userId: string): Promise<OmitedArt[]> {
+    const liked = await this.pgConn.query(
+      `
+      SELECT art.id, art.main_image as "mainImage", art.created_at as "createdAt" FROM art
+      INNER JOIN "like" ON art.id = "like".art_id WHERE "like".user_id = $1
+      `,
+      [userId]
+    );
+
+    return liked;
   }
 }

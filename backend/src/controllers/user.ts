@@ -14,13 +14,14 @@ import { Service } from 'typedi';
 import { userAuth } from '../middlewares';
 import { getFileUploadOptions } from './options/fileUploadOptions';
 import { User } from '../db/entities';
-import { UserService } from '../services';
+import { UserService, MediaService } from '../services';
 import { AppRequest } from '../types';
+import { omitUser } from '../utils';
 
 @Service()
 @JsonController('/users')
 export default class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private mediaService: MediaService) {}
 
   @Post('/')
   async create(
@@ -77,5 +78,33 @@ export default class UserController {
   @Delete('/delete-account')
   async delete(@Req() req: AppRequest) {
     return await this.userService.delete(req.user);
+  }
+
+  @Get('/:userId/followers')
+  async getFollowers(@Param('userId') userId: string) {
+    const follows = await this.mediaService.getFollows(userId, 'user');
+
+    return follows.map((follow) => omitUser(follow.follower as User));
+  }
+
+  @Get('/:userId/following')
+  async getFollowing(@Param('userId') userId: string) {
+    const follows = await this.mediaService.getFollows(userId, 'follower');
+
+    return follows.map((follow) => omitUser(follow.user as User));
+  }
+
+  @UseBefore(userAuth())
+  @Get('/is-following/:userId')
+  async isFollowing(@Param('userId') userId: string, @Req() req: AppRequest) {
+    return await this.mediaService.isFollowing(req.user, userId);
+  }
+
+  @UseBefore(userAuth())
+  @Put('/toggle-follow/:userId')
+  async toggleFollow(@Param('userId') userId: string, @Req() req: AppRequest) {
+    await this.mediaService.toggleFollow(req.user, userId);
+
+    return [];
   }
 }

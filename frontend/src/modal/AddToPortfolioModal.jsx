@@ -25,10 +25,10 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { SmallAddIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { AttachmentIcon, SmallAddIcon } from '@chakra-ui/icons';
 import { getSubjects, getTypes, addToPortfolio } from '../services';
 
-const AddToPortfolioModal = () => {
+const AddToPortfolioModal = ({ addRef }) => {
   const [catalog, setCatalog] = useState();
   const [img, setImg] = useState();
   const [tags, setTags] = useState([]);
@@ -89,7 +89,7 @@ const AddToPortfolioModal = () => {
 
   return (
     <>
-      <Button color="main.1" _focus={{ outline: 'none' }} onClick={onOpen}>
+      <Button color="main.1" _focus={{ outline: 'none' }} onClick={onOpen} hidden ref={addRef}>
         Add to portfolio
       </Button>
 
@@ -112,24 +112,22 @@ const AddToPortfolioModal = () => {
                   h="400px"
                   bgColor={!img && 'main.2'}
                   style={{
-                    'background-position': 'center',
-                    'background-repeat': 'no-repeat',
-                    'background-size': 'contain',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'contain',
                   }}
-                  bgImage={img && 'url(' + URL.createObjectURL(img) + ')'}
+                  bgImage={img ? 'url(' + URL.createObjectURL(img) + ')' : 'url(../img/image.png)'}
                 >
                   <input type="file" hidden ref={imgInput} onChange={() => setImg(imgInput.current.files[0])} />
-                  <Button onClick={chooseImg} w="130px">
-                    Upload image
-                  </Button>
+                  <IconButton onClick={chooseImg} icon={<AttachmentIcon />} _focus={{ outline: 'none' }} />
                 </Box>
                 <HStack spacing="5px">
                   {tags &&
                     tags.map((tag) => {
                       return (
-                        <HStack spacing="0px">
+                        <HStack spacing="0px" key={tag.id}>
                           <Tag>{tag}</Tag>
-                          <IconButton type="submit" size="xs" icon={<SmallCloseIcon />} _focus={{ outline: 'none' }} />
+                          {/* <IconButton type="submit" size="xs" icon={<SmallCloseIcon />} _focus={{ outline: 'none' }} /> */}
                         </HStack>
                       );
                     })}
@@ -185,7 +183,7 @@ const AddToPortfolioModal = () => {
                     <Select color="main.white" w="320px" h="35px" name="typeId" ref={register({ required: true })}>
                       {catalog?.types.map((type) => {
                         return (
-                          <option style={{ color: '#171717' }} value={type.id}>
+                          <option style={{ color: '#171717' }} value={type.id} key={type.id}>
                             {type.value}
                           </option>
                         );
@@ -206,6 +204,7 @@ const AddToPortfolioModal = () => {
                               name="subjectIds"
                               value={subject.id}
                               ref={register({ required: true })}
+                              key={subject.id}
                             >
                               {subject.value}
                             </Checkbox>
