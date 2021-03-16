@@ -3,6 +3,7 @@ import { Box, Button, Center, Heading, HStack, Image, Input, Text, Textarea, VSt
 import { UserContext } from '../app/UserContext';
 import { useForm } from 'react-hook-form';
 import { sendCode, changeProfileImage, changeBackgroundImage, deleteAccount, update } from '../services';
+import { useEffect } from 'react';
 
 const AccountSettings = ({ history }) => {
   const [error, setError] = useState();
@@ -10,8 +11,14 @@ const AccountSettings = ({ history }) => {
   const fileProfileInput = useRef();
   const fileBackgroundForm = useRef();
   const fileBackgroundInput = useRef();
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const { register, handleSubmit } = useForm();
+
+  useEffect(() => {
+    if (!user) {
+      history.push('/');
+    }
+  }, [user, history]);
 
   const chooseProfileFile = () => {
     fileProfileInput.current.click();
@@ -25,14 +32,16 @@ const AccountSettings = ({ history }) => {
     const formData = new FormData();
     formData.append('file', fileProfileInput.current.files[0]);
 
-    await changeProfileImage(formData);
+    const res = await changeProfileImage(formData);
+    setUser({ ...user, profileImage: res.data.profileImage });
   };
 
   const handleBackgroundUpload = async () => {
     const formData = new FormData();
     formData.append('file', fileBackgroundInput.current.files[0]);
 
-    await changeBackgroundImage(formData);
+    const res = await changeBackgroundImage(formData);
+    setUser({ ...user, backgroundImage: res.data.backgroundImage });
   };
 
   const handleDelete = async () => {
@@ -124,7 +133,7 @@ const AccountSettings = ({ history }) => {
                       </Text>
                       <Textarea
                         name="about"
-                        placeholder={user?.about}
+                        defaultValue={user?.about}
                         textColor="main.white"
                         w="300px"
                         h="100px"
@@ -141,7 +150,7 @@ const AccountSettings = ({ history }) => {
                         <Input
                           type="text"
                           name="username"
-                          placeholder={user?.username}
+                          defaultValue={user?.username}
                           textColor="main.white"
                           w="280px"
                           h="35px"

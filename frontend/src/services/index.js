@@ -62,7 +62,7 @@ export const login = async (loginData) => {
 };
 
 export const logout = async () => {
-  return await api.post('auth/logout');
+  return await api.delete('auth/logout');
 };
 
 export const sendCode = async () => {
@@ -86,6 +86,10 @@ export const getArtDetails = async (artId) => {
   return await api.get('art/details/' + artId);
 };
 
+export const deleteArt = async (artId) => {
+  return await api.delete('art/' + artId);
+};
+
 export const addToPortfolio = async (artData) => {
   return await api.post('art/', artData, {
     headers: {
@@ -105,6 +109,26 @@ export const toggleLike = async (artId) => {
 export const getLiked = async (userId) => {
   return await api.get('art/liked/' + userId);
 };
+
+export const postComment = async (artId, value) => {
+  return await api.post('art/comment/' + artId, { value });
+};
+
+export const getComments = async (artId) => {
+  return await api.get('art/details/' + artId + '/comments');
+};
+
+export const deleteComment = async (commentId) => {
+  return await api.delete('art/comment/' + commentId);
+};
+
+export const getTop = async () => {
+  return await api.get('art/top');
+};
+
+export const search = async (q, options) => {
+  return await api.get('art/search?q=' + q + '&options=' + options);
+}
 
 //catalog
 export const getSubjects = async () => {

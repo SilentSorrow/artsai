@@ -7,9 +7,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
   Menu,
   MenuButton,
   MenuDivider,
@@ -17,20 +14,22 @@ import {
   MenuList,
   Spacer,
 } from '@chakra-ui/react';
+import SearchBox from '../components/SearchBox';
 import LoginModal from '../modal/LoginModal';
 import AddToPortfolioModal from '../modal/AddToPortfolioModal';
-import { CloseIcon, HamburgerIcon, PlusSquareIcon, SearchIcon, SettingsIcon, StarIcon } from '@chakra-ui/icons';
+import { CloseIcon, HamburgerIcon, PlusSquareIcon, SettingsIcon, StarIcon } from '@chakra-ui/icons';
 import { UserContext } from '../app/UserContext';
 import { logout } from '../services';
 
-const Navbar = () => {
+const Navbar = ({ refresh }) => {
   const addRef = useRef();
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const history = useHistory();
 
   const logoutUser = async () => {
     await logout();
     localStorage.removeItem('app-auth');
+    setUser(null);
   };
 
   const renderAuthButtons = () => {
@@ -56,9 +55,9 @@ const Navbar = () => {
         <AddToPortfolioModal addRef={addRef} />
 
         <Menu>
-          <MenuButton as={IconButton} icon={<HamburgerIcon />} h="35px" w="55px" />
+          <MenuButton as={IconButton} h="35px" w="55px" icon={<HamburgerIcon />} _focus={{ outline: 'none' }} />
           <MenuList>
-            <MenuItem icon={<StarIcon />} onClick={() => history.push(user.username)}>
+            <MenuItem icon={<StarIcon />} onClick={() => history.push('/artists/' + user.username)}>
               My proflile
             </MenuItem>
             <MenuItem icon={<PlusSquareIcon />} onClick={() => addRef.current.click()}>
@@ -81,25 +80,12 @@ const Navbar = () => {
     <Box w="100wh" h="55px" bg="main.1" borderBottom="1px" borderBottomColor="main.green" padding="10px 35px 10px 35px">
       <Flex>
         <Box>
-          <Heading size="lg" color="main.green">
+          <Heading size="lg" color="main.green" onClick={() => history.push('/')}>
             ArtSai
           </Heading>
         </Box>
         <Spacer />
-        <Box>
-          <InputGroup>
-            <Input type="text" placeholder="Search..." textColor="main.white" w="700px" h="35px" />
-            <InputRightElement h="35px">
-              <IconButton
-                variant="outlined"
-                color="main.white"
-                h="100%"
-                icon={<SearchIcon />}
-                _focus={{ outline: 'none' }}
-              />
-            </InputRightElement>
-          </InputGroup>
-        </Box>
+        <SearchBox refresh={refresh} />
         <Spacer />
         {user ? renderAccoutMenu() : renderAuthButtons()}
       </Flex>

@@ -5,6 +5,8 @@ import VerifyAccount from '../pages/VerifyAccount';
 import Profile from '../pages/Profile';
 import ArtDetails from '../pages/ArtDetails';
 import AccountSettings from '../pages/AccountSettings';
+import Main from '../pages/Main';
+import Search from '../pages/Search';
 import { UserContext } from './UserContext';
 import { checkToken } from '../services';
 
@@ -16,6 +18,8 @@ const App = () => {
       const res = await checkToken();
       if (!res.data.error) {
         setUser(res.data);
+      } else {
+        localStorage.removeItem('app-auth');
       }
     })();
   }, []);
@@ -23,9 +27,11 @@ const App = () => {
   return (
     <Switch>
       <UserContext.Provider value={{ user, setUser }}>
-        <Route exact path="/signup" component={SignUp} /> {/* */}
-        <Route exact path="/verify-account" component={VerifyAccount} /> {/* */}
-        <Route exact path="/account-settings" component={AccountSettings} /> {/* */}
+        <Route exact path="/" component={Main} />
+        <Route exact path="/search" component={Search} />
+        <Route exact path="/signup" component={SignUp} />
+        <Route exact path="/verify-account" component={VerifyAccount} />
+        <Route exact path="/account-settings" component={AccountSettings} />
         <Route exact path="/artists/:username" component={Profile} />
         <Route exact path="/details/:artId" component={ArtDetails} />
       </UserContext.Provider>

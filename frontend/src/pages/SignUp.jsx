@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Center,
@@ -13,11 +13,19 @@ import {
 } from '@chakra-ui/react';
 import { EmailIcon, LockIcon, StarIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
+import { UserContext } from '../app/UserContext';
 import { signUp, sendCode } from '../services';
 
 const SignUp = ({ history }) => {
+  const { user } = useContext(UserContext);
   const [error, setError] = useState();
   const { register, handleSubmit } = useForm();
+
+  useEffect(() => {
+    if (user) {
+      history.push('/');
+    }
+  }, [user, history]);
 
   const onSignUp = async (formData) => {
     if (formData.password !== formData.confirmPassword) {

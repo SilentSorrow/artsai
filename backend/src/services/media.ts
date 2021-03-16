@@ -1,18 +1,19 @@
 import * as typeorm from 'typeorm';
 import fs from 'fs';
 import { IMG_DIRECTORY_PATH } from '../app/constants';
-import { BadRequestError } from 'routing-controllers';
-import { User, Like, Follow } from '../db/entities';
+import { BadRequestError, UnauthorizedError } from 'routing-controllers';
+import { User, Like, Follow, Comment } from '../db/entities';
 import { omitUser } from '../utils';
-import { OmitedUser } from 'src/types';
 
 export default class MediaService {
   private likeRepo: typeorm.Repository<Like>;
   private followRepo: typeorm.Repository<Follow>;
+  private commentRepo: typeorm.Repository<Comment>;
 
   constructor(private pgConn: typeorm.Connection) {
     this.likeRepo = this.pgConn.getRepository(Like);
     this.followRepo = this.pgConn.getRepository(Follow);
+    this.commentRepo = this.pgConn.getRepository(Comment);
   }
 
   getImage(imageFileName: string): Buffer | undefined {
@@ -110,5 +111,44 @@ export default class MediaService {
       console.log(err);
       throw new BadRequestError('Something went wrong...');
     }
+  }
+
+  async getComments(artId: string): Promise<Comment[]> {
+    const comments = await this.commentRepo.find({
+      where: {
+        art: {
+          id: artId,
+        },
+      },
+      relations: ['art', 'user'],
+    });
+
+    comments.forEach((comment) => (comment.user = omitUser(comment.user as User)));
+
+    return comments;
+  }
+
+  async postComment(artId: string, user: User, value: string): Promise<Comment> {
+    const comment = {
+      value,
+      art: { id: artId },
+      user: { id: user.id },
+    };
+
+    return this.commentRepo.save(comment);
+  }
+
+  async deleteComment(commentId: string, user: User): Promise<Comment | undefined> {
+    const comment = await this.commentRepo.findOne({ id: commentId }, { relations: ['user'] });
+    if (!comment) {
+      return comment;
+    }
+    if (comment.user.id !== user.id) {
+      throw new UnauthorizedError('You are not authorized to make this action');
+    }
+
+    const { user: u, ...rest } = await this.commentRepo.remove(comment as Comment);
+
+    return rest as Comment;
   }
 }

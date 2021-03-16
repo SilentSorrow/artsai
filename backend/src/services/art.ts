@@ -71,19 +71,50 @@ export default class ArtService {
       throw new UnauthorizedError('You are not authorized to make this action');
     }
 
-    return this.artRepo.remove(art as Art);
+    const { user: u, ...rest } = await this.artRepo.remove(art as Art);
+
+    return rest as Art;
   }
 
   async getTop(): Promise<OmitedArt[]> {
-    const top = await this.pgConn.query(
+    return await this.pgConn.query(
       `
-      SELECT id, main_image as "mainImage", created_At as "createdAt" FROM art WHERE id
-      IN (SELECT art_id FROM "like" GROUP BY art_id ORDER BY count(*) DESC LIMIT $1)
+      SELECT art.id, main_image as "mainImage", art.created_At as "createdAt", type.value as type FROM art
+      INNER JOIN type ON art.type_id = type.id
+      WHERE art.id IN (SELECT art_id FROM "like" GROUP BY art_id ORDER BY count(*) DESC LIMIT $1)
       `, // something with date, like created within last week
       [TOP_ART_COUNT]
     );
+  }
 
-    return top;
+  async search(q: string, options: string[]): Promise<OmitedArt[]> {
+    let optionQuery = '';
+    if (options.includes('title')) {
+      optionQuery += `WHERE UPPER(title) LIKE '%'||:q||'%'`;
+    }
+    if (options.includes('description')) {
+      optionQuery += optionQuery
+        ? ` OR UPPER(description) LIKE '%'||:q||'%'`
+        : `WHERE UPPER(description) LIKE '%'||:q||'%'`;
+    }
+    if (options.includes('tags')) {
+      optionQuery += optionQuery ? ` OR UPPER(tag.value) = :q` : `WHERE UPPER(tag.value) = :q`;
+    }
+
+    const [query, params] = this.pgConn.driver.escapeQueryWithParameters(
+      `
+      SELECT DISTINCT art.id, main_image as "mainImage", art.created_At as "createdAt",
+      type.id as type, ARRAY_AGG(subject_art_art."subjectId") subjects FROM art
+      INNER JOIN tag ON art.id = tag.art_id
+      INNER JOIN subject_art_art ON art.id = subject_art_art."artId"
+      INNER JOIN type ON art.type_id = type.id
+      ${optionQuery}
+      GROUP BY art.id, type.id`,
+      { q: q.toUpperCase() },
+      {}
+    );
+
+    return await this.pgConn.query(query, params);
   }
 
   async getById(artId: string): Promise<Art> {

@@ -33,6 +33,8 @@ const Profile = () => {
               : 'url(../img/default-profile-background.jpg)'
           }
           bgPosition="bottom"
+          borderBottom="1px"
+          borderColor="main.green"
         >
           <VStack>
             <Image
@@ -63,7 +65,7 @@ const Profile = () => {
             )}
           </VStack>
         </Center>
-        <Box h="40px" w="100%" bg="main.1">
+        <Box h="40px" w="100%" bg="main.1" borderBottom="1px" borderColor="main.green">
           {userProfile?.id && <ProfileTabs userId={userProfile.id} />}
         </Box>
       </VStack>

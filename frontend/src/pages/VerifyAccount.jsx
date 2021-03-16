@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Box, Button, Center, Heading, HStack, Input, Text, VStack } from '@chakra-ui/react';
 import { verifyCode, sendCode } from '../services';
+import { UserContext } from '../app/UserContext';
 
 const VerifyAccount = ({ history }) => {
+  const { user } = useContext(UserContext);
   const [code, setCode] = useState('');
   const [error, setError] = useState();
+
+  useEffect(() => {
+    if (user?.isVerified) {
+      history.push('/');
+    }
+  }, [user, history]);
 
   const handleChange = (event) => {
     const inputCode = event.target.value;
@@ -54,7 +62,13 @@ const VerifyAccount = ({ history }) => {
               <Button variant="solid" w="230px" _focus={{ outline: 'none' }} onClick={handleVerification}>
                 Submit
               </Button>
-              <Button variant="unstyled" color="main.white" bg="main.1" _focus={{ outline: 'none' }} onClick={handleResend}>
+              <Button
+                variant="unstyled"
+                color="main.white"
+                bg="main.1"
+                _focus={{ outline: 'none' }}
+                onClick={handleResend}
+              >
                 Resend
               </Button>
             </HStack>

@@ -149,7 +149,7 @@ const AddToPortfolioModal = ({ addRef }) => {
                 </HStack>
               </VStack>
               <VStack spacing="10px" w="300px">
-                <form encType="">
+                <form>
                   <Box>
                     <Text fontSize="15px" color="main.white">
                       Enter title:

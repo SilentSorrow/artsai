@@ -1,3 +1,4 @@
+import React, { useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -18,9 +19,10 @@ import {
 import { LockIcon, StarIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
 import { login } from '../services';
-import { useState } from 'react';
+import { UserContext } from '../app/UserContext';
 
 const LoginModal = () => {
+  const { setUser } = useContext(UserContext);
   const [error, setError] = useState();
   const { register, handleSubmit } = useForm();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,6 +34,7 @@ const LoginModal = () => {
       setError(res.data.error.message);
     } else {
       localStorage.setItem('app-auth', res.data.token);
+      setUser(res.data.user);
       onClose();
     }
   };

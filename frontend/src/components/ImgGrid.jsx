@@ -6,7 +6,7 @@ const ImgGrid = ({ art }) => {
   const history = useHistory();
 
   return (
-    <SimpleGrid columns={art?.length ? 7 : 1} minHeight="526px">
+    <SimpleGrid columns={art?.length ? 7 : 1} minHeight="calc(100vh - 395px)">
       {art?.length ? (
         art.map((a) => (
           <Image
@@ -18,7 +18,7 @@ const ImgGrid = ({ art }) => {
           />
         ))
       ) : (
-        <Heading size="sm" color="main.white" paddingTop="20px">
+        <Heading size="sm" color="main.white" paddingTop="20px" textAlign="center">
           This seem empty...
         </Heading>
       )}
