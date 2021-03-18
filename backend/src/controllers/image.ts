@@ -8,7 +8,7 @@ export default class ImageController {
   constructor(private mediaService: MediaService) {}
 
   @Get('/:imageFileName')
-  async getSubjects(@Param('imageFileName') imageFileName: string) {
+  async getImage(@Param('imageFileName') imageFileName: string) {
     return this.mediaService.getImage(imageFileName);
   }
 }

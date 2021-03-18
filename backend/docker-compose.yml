@@ -14,9 +14,9 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     ports:
-      - '3000:3000'
+      - 3000:3000
     volumes:
-      - '.:/app'
+      - .:/app
     links:
       - psql
       - redis
@@ -25,7 +25,7 @@ services:
 
   psql:
     env_file:
-      - '.env'
+      - .env
     image: postgres:12.5
     container_name: psql
     environment:
