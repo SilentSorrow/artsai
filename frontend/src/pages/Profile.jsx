@@ -29,7 +29,7 @@ const Profile = () => {
           w="100%"
           bgImage={
             userProfile?.backgroundImage
-              ? 'url(http://localhost:3000/api/images/' + userProfile?.backgroundImage + ')'
+              ? 'url(http://localhost/api/images/' + userProfile?.backgroundImage + ')'
               : 'url(../img/default-profile-background.jpg)'
           }
           bgPosition="bottom"
@@ -48,7 +48,7 @@ const Profile = () => {
               }
               src={
                 userProfile?.profileImage
-                  ? 'http://localhost:3000/api/images/' + userProfile?.profileImage
+                  ? 'http:/localhost/api/images/' + userProfile?.profileImage
                   : '../img/default-profile-image.png'
               }
               fit="cover"

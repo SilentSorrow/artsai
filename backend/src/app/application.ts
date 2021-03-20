@@ -59,7 +59,8 @@ export default class Application {
   init(): void {
     this.application.use(bodyParser.json());
     this.application.use(express.urlencoded({ extended: false }));
-    this.application.use(cors({ origin: FRONT_ULR, credentials: true }));
+    //this.application.use(cors({ origin: FRONT_ULR, credentials: true }));
+    this.application.use(cors());
   }
 
   listen(port: number = API_PORT): void {

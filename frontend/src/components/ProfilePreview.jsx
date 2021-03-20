@@ -24,7 +24,7 @@ const ProfilePreview = ({ user, history }) => {
             }
             src={
               user?.profileImage
-                ? 'http://localhost:3000/api/images/' + user?.profileImage
+                ? 'http://localhost/api/images/' + user?.profileImage
                 : '../img/default-profile-image.png'
             }
             fit="cover"

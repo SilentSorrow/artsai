@@ -1,6 +1,6 @@
 FROM node:14.15.4
 
-WORKDIR /app
+WORKDIR /app/backend
 
 EXPOSE 3000
 

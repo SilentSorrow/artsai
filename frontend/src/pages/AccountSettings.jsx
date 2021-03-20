@@ -49,6 +49,7 @@ const AccountSettings = ({ history }) => {
 
     if (!res.data.error) {
       localStorage.removeItem('app-auth');
+      setUser(null);
       history.push('/');
     }
   };
@@ -75,7 +76,7 @@ const AccountSettings = ({ history }) => {
                 rounded="md"
                 bgImage={
                   user?.backgroundImage
-                    ? 'url(http://localhost:3000/api/images/' + user?.backgroundImage + ')'
+                    ? 'url(http://localhost/api/images/' + user?.backgroundImage + ')'
                     : 'url(../img/default-profile-background.jpg)'
                 }
                 bgPosition="bottom"
@@ -92,7 +93,7 @@ const AccountSettings = ({ history }) => {
                     }
                     src={
                       user?.profileImage
-                        ? 'http://localhost:3000/api/images/' + user.profileImage
+                        ? 'http://localhost/api/images/' + user.profileImage
                         : '../img/default-profile-image.png'
                     }
                     fit="cover"
