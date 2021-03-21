@@ -28,7 +28,7 @@ const Comment = ({ comment, user, refresh }) => {
           }
           src={
             comment?.user?.profileImage
-              ? 'http://localhost/api/images/' + comment?.user?.profileImage
+              ? `${process.env.REACT_APP_API_URL}/images/` + comment?.user?.profileImage
               : '../img/default-profile-image.png'
           }
           fit="cover"

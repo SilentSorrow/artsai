@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider, CSSReset, extendTheme } from '@chakra-ui/react';
 import App from './app/App';
+require('dotenv').config();
 
 const colors = {
   main: {

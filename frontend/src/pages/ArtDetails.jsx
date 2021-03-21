@@ -89,7 +89,7 @@ const ArtDetails = ({ history }) => {
               backgroundRepeat: 'no-repeat',
               backgroundSize: 'contain',
             }}
-            bgImage={art && 'url(http://localhost/api/images/' + art.mainImage + ')'}
+            bgImage={art && `url(${process.env.REACT_APP_API_URL}/images/` + art.mainImage + ')'}
           />
         </Center>
         {art?.user?.id === user?.id && (
@@ -121,7 +121,7 @@ const ArtDetails = ({ history }) => {
             bgColor="main.3"
             bgImage={
               art?.user?.backgroundImage
-                ? 'url(http://localhost/api/images/' + art?.user?.backgroundImage + ')'
+                ? `url(${process.env.REACT_APP_API_URL}/images/` + art?.user?.backgroundImage + ')'
                 : 'url(../img/default-profile-background.jpg)'
             }
             bgPosition="bottom"
@@ -138,7 +138,7 @@ const ArtDetails = ({ history }) => {
                 }
                 src={
                   art?.user?.profileImage
-                    ? 'http://localhost/api/images/' + art?.user?.profileImage
+                    ? `${process.env.REACT_APP_API_URL}/images/` + art?.user?.profileImage
                     : '../img/default-profile-image.png'
                 }
                 fit="cover"

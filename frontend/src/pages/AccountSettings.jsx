@@ -76,7 +76,7 @@ const AccountSettings = ({ history }) => {
                 rounded="md"
                 bgImage={
                   user?.backgroundImage
-                    ? 'url(http://localhost/api/images/' + user?.backgroundImage + ')'
+                    ? `url(${process.env.REACT_APP_API_URL}/images/` + user?.backgroundImage + ')'
                     : 'url(../img/default-profile-background.jpg)'
                 }
                 bgPosition="bottom"
@@ -93,7 +93,7 @@ const AccountSettings = ({ history }) => {
                     }
                     src={
                       user?.profileImage
-                        ? 'http://localhost/api/images/' + user.profileImage
+                        ? `${process.env.REACT_APP_API_URL}/images/` + user.profileImage
                         : '../img/default-profile-image.png'
                     }
                     fit="cover"

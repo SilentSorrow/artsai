@@ -29,7 +29,7 @@ const Profile = () => {
           w="100%"
           bgImage={
             userProfile?.backgroundImage
-              ? 'url(http://localhost/api/images/' + userProfile?.backgroundImage + ')'
+              ? `url(${process.env.REACT_APP_API_URL}/images/` + userProfile?.backgroundImage + ')'
               : 'url(../img/default-profile-background.jpg)'
           }
           bgPosition="bottom"
@@ -48,7 +48,7 @@ const Profile = () => {
               }
               src={
                 userProfile?.profileImage
-                  ? 'http:/localhost/api/images/' + userProfile?.profileImage
+                  ? `${process.env.REACT_APP_API_URL}/images/` + userProfile?.profileImage
                   : '../img/default-profile-image.png'
               }
               fit="cover"

@@ -11,7 +11,7 @@ const ImgGrid = ({ art }) => {
         art.map((a) => (
           <Image
             boxSize="300px"
-            src={'http://localhost/api/images/' + a.mainImage}
+            src={`${process.env.REACT_APP_API_URL}/images/` + a.mainImage}
             fit="cover"
             key={a.id}
             onClick={() => history.replace('/details/' + a.id)}
