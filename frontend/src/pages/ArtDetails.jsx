@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Center, Heading, HStack, IconButton, Image, Tag, Text, Textarea, VStack } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { UserContext } from '../app/UserContext';
 import Comment from '../components/Comment';
 import {
@@ -15,11 +15,13 @@ import {
   getComments,
   sendCode,
 } from '../services';
+import AddToPortfolioModal from '../modal/AddToPortfolioModal';
 
 const ArtDetails = ({ history }) => {
   const { user } = useContext(UserContext);
   const { artId } = useParams();
   const commentRef = useRef();
+  const updateRef = useRef();
   const [rerender, setRerender] = useState(0);
   const [art, setArt] = useState(null);
   const [likes, setLikes] = useState([]);
@@ -93,14 +95,25 @@ const ArtDetails = ({ history }) => {
           />
         </Center>
         {art?.user?.id === user?.id && (
-          <IconButton
-            variant="unstyled"
-            alignSelf="flex-start"
-            onClick={deleteA}
-            icon={<DeleteIcon />}
-            _focus={{ outline: 'none' }}
-            color="main.red"
-          />
+          <>
+            <AddToPortfolioModal addRef={updateRef} art={art} />
+            <IconButton
+              variant="unstyled"
+              alignSelf="flex-start"
+              onClick={() => updateRef.current.click()}
+              icon={<EditIcon />}
+              _focus={{ outline: 'none' }}
+              color="main.white"
+            />
+            <IconButton
+              variant="unstyled"
+              alignSelf="flex-start"
+              onClick={deleteA}
+              icon={<DeleteIcon />}
+              _focus={{ outline: 'none' }}
+              color="main.red"
+            />
+          </>
         )}
 
         <VStack

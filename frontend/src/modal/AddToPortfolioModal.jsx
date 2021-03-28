@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -25,10 +26,11 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { AttachmentIcon, SmallAddIcon } from '@chakra-ui/icons';
-import { getSubjects, getTypes, addToPortfolio } from '../services';
+import { AttachmentIcon, SmallAddIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { getSubjects, getTypes, addToPortfolio, updateArt } from '../services';
 
-const AddToPortfolioModal = ({ addRef }) => {
+const AddToPortfolioModal = ({ addRef, art }) => {
+  const history = useHistory();
   const [catalog, setCatalog] = useState();
   const [img, setImg] = useState();
   const [tags, setTags] = useState([]);
@@ -36,6 +38,12 @@ const AddToPortfolioModal = ({ addRef }) => {
   const imgInput = useRef();
   const { register, handleSubmit } = useForm();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    if (art) {
+      setTags(art?.tags.map((tag) => tag.value));
+    }
+  }, [art]);
 
   useEffect(() => {
     (async () => {
@@ -70,20 +78,35 @@ const AddToPortfolioModal = ({ addRef }) => {
     fd.append('typeId', formData.typeId);
     fd.append('subjectIds', JSON.stringify(formData.subjectIds));
     fd.append('tags', JSON.stringify(formData.tags));
-    fd.append('file', img);
 
-    if (!img) {
+    let err = false;
+    if (!img && !art) {
       setError('Choose an image to upload');
+    } else {
+      fd.append('file', img);
+    }
+
+    if (art) {
+      fd.append('id', art.id);
+      const res = await updateArt(fd);
+      if (res.data.error?.message) {
+        setError(res.data.error.message);
+        err = true;
+      }
     } else {
       const res = await addToPortfolio(fd);
       if (res.data.error?.message) {
         setError(res.data.error.message);
-      } else {
-        setImg(null);
-        setError(null);
-        setTags([]);
-        onClose();
+        err = true;
       }
+    }
+
+    if (!err) {
+      setImg(null);
+      setError(null);
+      setTags([]);
+      onClose();
+      history.go(0);
     }
   };
 
@@ -99,7 +122,7 @@ const AddToPortfolioModal = ({ addRef }) => {
           <ModalHeader color="main.white">
             <HStack spacing="5px">
               <Text fontSize="20px" color="main.white">
-                Add to portfolio
+                {!art ? 'Add to portfolio' : 'Update'}
               </Text>
             </HStack>
           </ModalHeader>
@@ -110,13 +133,19 @@ const AddToPortfolioModal = ({ addRef }) => {
                 <Box
                   w="700px"
                   h="400px"
-                  bgColor={!img && 'main.2'}
+                  bgColor="main.1"
                   style={{
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'contain',
                   }}
-                  bgImage={img ? 'url(' + URL.createObjectURL(img) + ')' : 'url(../img/image.png)'}
+                  bgImage={
+                    img
+                      ? 'url(' + URL.createObjectURL(img) + ')'
+                      : art
+                      ? `url(${process.env.REACT_APP_API_URL}/images/${art?.mainImage})`
+                      : 'url(../img/image.png)'
+                  }
                 >
                   <input type="file" hidden ref={imgInput} onChange={() => setImg(imgInput.current.files[0])} />
                   <IconButton onClick={chooseImg} icon={<AttachmentIcon />} _focus={{ outline: 'none' }} />
@@ -127,7 +156,6 @@ const AddToPortfolioModal = ({ addRef }) => {
                       return (
                         <HStack spacing="0px" key={tag.id}>
                           <Tag>{tag}</Tag>
-                          {/* <IconButton type="submit" size="xs" icon={<SmallCloseIcon />} _focus={{ outline: 'none' }} /> */}
                         </HStack>
                       );
                     })}
@@ -146,6 +174,13 @@ const AddToPortfolioModal = ({ addRef }) => {
                       </InputRightElement>
                     </InputGroup>
                   </form>
+                  <IconButton
+                    type="submit"
+                    size="xs"
+                    icon={<SmallCloseIcon />}
+                    _focus={{ outline: 'none' }}
+                    onClick={() => setTags([])}
+                  />
                 </HStack>
               </VStack>
               <VStack spacing="10px" w="300px">
@@ -161,6 +196,7 @@ const AddToPortfolioModal = ({ addRef }) => {
                       w="320px"
                       h="35px"
                       ref={register({ required: true })}
+                      defaultValue={art && art.title}
                     />
                   </Box>
                   <Box>
@@ -174,6 +210,7 @@ const AddToPortfolioModal = ({ addRef }) => {
                       size="sm"
                       resize="none"
                       ref={register({ required: true })}
+                      defaultValue={art && art.description}
                     />
                   </Box>
                   <Box>
@@ -183,7 +220,12 @@ const AddToPortfolioModal = ({ addRef }) => {
                     <Select color="main.white" w="320px" h="35px" name="typeId" ref={register({ required: true })}>
                       {catalog?.types.map((type) => {
                         return (
-                          <option style={{ color: '#171717' }} value={type.id} key={type.id}>
+                          <option
+                            style={{ color: '#171717' }}
+                            value={type.id}
+                            key={type.id}
+                            selected={art?.type?.id === type.id}
+                          >
                             {type.value}
                           </option>
                         );
@@ -194,7 +236,7 @@ const AddToPortfolioModal = ({ addRef }) => {
                     <Text fontSize="15px" color="main.white">
                       Choose art subjects:
                     </Text>
-                    <CheckboxGroup>
+                    <CheckboxGroup defaultValue={art?.subjects.map((s) => s.id)}>
                       <SimpleGrid columns={2} spacing={2.5}>
                         {catalog?.subjects.map((subject) => {
                           return (

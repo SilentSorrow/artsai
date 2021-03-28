@@ -52,6 +52,32 @@ export default class ArtController {
   }
 
   @UseBefore(userAuth())
+  @Put('/')
+  async update(
+    @UploadedFile('file', { options: getFileUploadOptions() })
+    file: Express.Multer.File,
+    @BodyParam('id') id: string,
+    @BodyParam('title', { required: true }) title: string,
+    @BodyParam('description', { required: true }) description: string,
+    @BodyParam('typeId', { required: true }) typeId: string,
+    @BodyParam('subjectIds', { required: true }) subjectIds: string[],
+    @BodyParam('tags', { required: true }) tags: string[],
+    @Req() req: AppRequest
+  ) {
+    const art = {
+      id,
+      title,
+      description,
+      typeId,
+      subjectIds,
+      tags,
+      mainImage: file?.filename,
+    } as ArtData;
+
+    return await this.artService.update(art, req.user);
+  }
+
+  @UseBefore(userAuth())
   @Delete('/:artId')
   async delete(@Param('artId') artId: string, @Req() req: AppRequest) {
     return await this.artService.delete(artId, req.user);

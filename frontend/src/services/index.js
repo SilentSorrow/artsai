@@ -90,6 +90,14 @@ export const deleteArt = async (artId) => {
   return await api.delete('art/' + artId);
 };
 
+export const updateArt = async (artData) => {
+  return await api.put('art/', artData, {
+    headers: {
+      'Content-Type': `multipart/form-data`,
+    },
+  });
+};
+
 export const addToPortfolio = async (artData) => {
   return await api.post('art/', artData, {
     headers: {
@@ -140,3 +148,6 @@ export const getTypes = async () => {
 };
 
 //images
+export const getImage = async (imagePath) => {
+  return await api.get('images/' + imagePath);
+};

@@ -32,6 +32,7 @@ export default class ArtService {
     try {
       const type = await this.typeRepo.findOne({ id: artData.typeId });
       const art = {
+        id: artData.id,
         title: artData.title,
         description: artData.description,
         mainImage: artData.mainImage,
@@ -60,6 +61,22 @@ export default class ArtService {
     } catch (err) {
       throw new ValidationError('Invalid art data', err.message);
     }
+  }
+
+  async update(artData: ArtData, user: User): Promise<Art> {
+    const oldArt = await this.artRepo.findOne({ id: artData.id });
+    if (!artData.mainImage) {
+      if (oldArt) {
+        artData.mainImage = oldArt.mainImage;
+      }
+    }
+
+    if (artData.tags.length) {
+      const a = await this.pgConn.query(`DELETE FROM tag WHERE art_id = $1;`, [artData.id]);
+      console.log(a);
+    }
+
+    return this.save(artData, user);
   }
 
   async delete(id: string, user: User): Promise<Art | undefined> {
